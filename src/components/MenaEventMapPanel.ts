@@ -1,5 +1,6 @@
 import { Panel } from './Panel';
 import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
+import { selectMenaEvent } from '@/services/mena-event-selection';
 
 const COUNTRIES = [
   ['EG', 'Egypt', 30.8, 30.8], ['IL', 'Israel', 31.5, 34.8], ['PS', 'Palestine', 31.9, 35.2],
@@ -72,7 +73,7 @@ export class MenaEventMapPanel extends Panel {
       const ageHours = Math.max(0, (Date.now() - event.timestamp) / 3_600_000);
       const opacity = Math.max(0.25, 1 - ageHours / 168);
       const radius = event.confidence === 'high' ? 5 : event.confidence === 'medium' ? 4 : 3;
-      points.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${radius}" fill="currentColor" opacity="${opacity.toFixed(2)}"><title>${esc(event.title)}</title></circle>`);
+      points.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${radius}" data-event-id="${esc(event.id)}" class="mena-map-event-point" fill="currentColor" opacity="${opacity.toFixed(2)}"><title>${esc(event.title)}</title></circle>`);
     }
 
     const labels = COUNTRIES.map(([code, name, lat, lon]) => {
@@ -92,6 +93,10 @@ export class MenaEventMapPanel extends Panel {
           <g class="mena-map-events">${points.join('')}</g>
         </svg>
       </div>
-      <div class="mena-map-note">Schematic regional projection. Precise coordinates are used when present; otherwise events are plotted at the country reference centroid.</div>`;
+      <div class="mena-map-note">Schematic regional projection. Precise coordinates are used when present; otherwise events are plotted at the country reference centroid. Select a point to inspect evidence.</div>`;
+    this.body.querySelectorAll<SVGCircleElement>('[data-event-id]').forEach((point) => {
+      point.addEventListener('click', () => selectMenaEvent(point.dataset.eventId ?? null));
+      point.style.cursor = 'pointer';
+    });
   }
 }
