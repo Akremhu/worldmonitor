@@ -133,6 +133,7 @@ import { fetchXFeed, isUsableHydratedXFeed } from '@/services/x-intel';
 import { fetchOrefAlerts, startOrefPolling, stopOrefPolling, onOrefAlertsUpdate, type OrefAlertsResponse } from '@/services/oref-alerts';
 import { getResilienceRanking } from '@/services/resilience';
 import { ingestMenaNewsItems, setMenaEvents } from '@/services/mena-event-pipeline';\nimport { enrichMenaEventsWithEntities } from '@/services/mena-event-enrichment';
+import { updateMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 import { buildResilienceChoroplethMap } from '@/components/resilience-choropleth-utils';
 import { enrichEventsWithExposure } from '@/services/population-exposure';
 import { debounce, getCircuitBreakerCooldownInfo, loadFromStorage, saveToStorage } from '@/utils';
@@ -2240,6 +2241,7 @@ export class DataLoaderManager implements AppModule {
       const menaEvents = ingestMenaNewsItems(collectedNews);
       const enriched = enrichMenaEventsWithEntities(menaEvents);
       setMenaEvents(enriched.events);
+      updateMenaIntelligenceStore(enriched.events, enriched.entities);
       if (import.meta.env.DEV) {
         console.info(`[MENA] normalized ${enriched.events.length} events and ${enriched.entities.length} entities from ${collectedNews.length} news items`);
       }
