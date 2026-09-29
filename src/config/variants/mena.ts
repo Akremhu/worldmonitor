@@ -18,6 +18,7 @@ export const DEFAULT_PANELS: Record<string, PanelConfig> = {
   'mena-correlation': { name: 'MENA Event Correlation', enabled: true, priority: 1 },
   'mena-entity-monitor': { name: 'MENA Entity Monitor', enabled: true, priority: 1 },
   'mena-historical-intelligence': { name: 'Historical MENA Intelligence', enabled: true, priority: 1 },
+  'mena-operational-activity': { name: 'MENA Operational Activity', enabled: true, priority: 1 },
   'strategic-posture': { name: 'Regional Strategic Posture', enabled: true, priority: 1 },
   intel: { name: 'MENA Intelligence Feed', enabled: true, priority: 1 },
   'gdelt-intel': { name: 'Live Regional Intelligence', enabled: true, priority: 1 },
