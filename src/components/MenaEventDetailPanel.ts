@@ -3,7 +3,7 @@ import { getMenaEntity, getMenaEvent, getMenaIntelligenceStore, subscribeMenaInt
 import { getMenaSourcePolicy } from '@/config/mena/source-registry';
 import type { MenaEvent, MenaEventSource } from '@/config/mena/events';
 import { getSelectedMenaEventId, subscribeMenaEventSelection } from '@/services/mena-event-selection';
-import { getMenaEventHistory } from '@/services/mena-event-history';
+import { getMenaEventHistory, queryDurableMenaEventHistory } from '@/services/mena-event-history';
 
 const EMPTY = '—';
 
@@ -42,6 +42,7 @@ function addField(container: HTMLElement, label: string, value: string): void {
 
 export class MenaEventDetailPanel extends Panel {
   private body: HTMLElement;
+  private durableHistoryToken = 0;
   private unsubscribeSelection: (() => void) | null = null;
   private unsubscribeStore: (() => void) | null = null;
 
@@ -204,5 +205,25 @@ export class MenaEventDetailPanel extends Panel {
     note.textContent = 'OSINT provenance is preserved as reported evidence. Entity mention does not by itself establish responsibility, attribution, or intent.';
 
     this.body.append(title, summary, grid, sources, entities, relations, history, note);
+    const token = ++this.durableHistoryToken;
+    void queryDurableMenaEventHistory({ eventId: event.id, limit: 50 })
+      .then(records => {
+        if (token !== this.durableHistoryToken || getSelectedMenaEventId() !== event.id) return;
+        const durable = document.createElement('section');
+        durable.className = 'mena-detail-section';
+        const durableTitle = document.createElement('h4');
+        durableTitle.textContent = `Durable archive (${records.length} observations)`;
+        durable.appendChild(durableTitle);
+        for (const record of records.slice().sort((a, b) => a.timestamp - b.timestamp)) {
+          const row = document.createElement('article');
+          row.className = 'mena-detail-history-row';
+          row.textContent = `${formatDate(record.timestamp)} · ${record.eventType.replace(/_/g, ' ')} · ${record.sourceIds.join(', ') || EMPTY}`;
+          durable.appendChild(row);
+        }
+        history.appendChild(durable);
+      })
+      .catch(() => {
+        // The live evidence panel remains usable when the durable archive is unavailable.
+      });
   }
 }
