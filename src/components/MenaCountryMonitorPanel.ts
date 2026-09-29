@@ -93,6 +93,8 @@ export class MenaCountryMonitorPanel extends Panel {
 
       const current = document.createElement('span');
       current.textContent = String(rowData.last24h);
+      const delta = rowData.last24h - rowData.previous24h;
+      current.title = `Previous 24h: ${rowData.previous24h}; change: ${delta >= 0 ? '+' : ''}${delta}`;
 
       const week = document.createElement('span');
       week.textContent = String(rowData.last7d);
@@ -115,6 +117,11 @@ export class MenaCountryMonitorPanel extends Panel {
     } else {
       this.body.appendChild(list);
     }
+
+    const signal = document.createElement('div');
+    signal.className = 'mena-country-footer';
+    signal.textContent = 'Δ24h compares the current 24h reporting volume with the preceding 24h window; it is not a severity score.';
+    this.body.appendChild(signal);
 
     const footer = document.createElement('div');
     footer.className = 'mena-country-footer';
