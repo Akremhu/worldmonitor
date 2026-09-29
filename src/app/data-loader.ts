@@ -132,7 +132,7 @@ import { fetchTelegramFeed, getTelegramIntelGeneration } from '@/services/telegr
 import { fetchXFeed, isUsableHydratedXFeed } from '@/services/x-intel';
 import { fetchOrefAlerts, startOrefPolling, stopOrefPolling, onOrefAlertsUpdate, type OrefAlertsResponse } from '@/services/oref-alerts';
 import { getResilienceRanking } from '@/services/resilience';
-import { ingestMenaNewsItems, setMenaEvents } from '@/services/mena-event-pipeline';
+import { ingestMenaNewsItems, setMenaEvents } from '@/services/mena-event-pipeline';\nimport { enrichMenaEventsWithEntities } from '@/services/mena-event-enrichment';
 import { buildResilienceChoroplethMap } from '@/components/resilience-choropleth-utils';
 import { enrichEventsWithExposure } from '@/services/population-exposure';
 import { debounce, getCircuitBreakerCooldownInfo, loadFromStorage, saveToStorage } from '@/utils';
@@ -2238,9 +2238,10 @@ export class DataLoaderManager implements AppModule {
     this.ctx.allNews = collectedNews;
     if (SITE_VARIANT === 'mena') {
       const menaEvents = ingestMenaNewsItems(collectedNews);
-      setMenaEvents(menaEvents);
+      const enriched = enrichMenaEventsWithEntities(menaEvents);
+      setMenaEvents(enriched.events);
       if (import.meta.env.DEV) {
-        console.info(`[MENA] normalized ${menaEvents.length} events from ${collectedNews.length} news items`);
+        console.info(`[MENA] normalized ${enriched.events.length} events and ${enriched.entities.length} entities from ${collectedNews.length} news items`);
       }
     }
     const committedServedStale = [...categoryServedStale.values()].some(Boolean) || intelServedStale;
