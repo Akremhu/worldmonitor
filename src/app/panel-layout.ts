@@ -294,6 +294,8 @@ export const DEFERRED_PANEL_NATURAL_FOOTPRINTS: Readonly<Record<string, Deferred
   'telegram-intel': { rowSpan: 2 },
   'x-intel': { rowSpan: 2 },
   'threat-timeline': { rowSpan: 2 },
+  'mena-event-intelligence': { rowSpan: 2, className: 'panel-wide' },
+  'mena-entity-monitor': { rowSpan: 2, className: 'panel-wide' },
   'trade-policy': { rowSpan: 2 },
   'ucdp-events': { rowSpan: 2 },
   'windy-webcams': { className: 'panel-wide' },
