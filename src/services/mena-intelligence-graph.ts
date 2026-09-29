@@ -26,7 +26,13 @@ export interface MenaGraphSnapshot {
 }
 
 function edgeId(from: string, to: string, type: string): string {
-  return 'me-edge-' + createMenaEventId(Date.now(), type, from + ':' + to).slice(3);
+  const input = from + '|' + to + '|' + type;
+  let hash = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return 'me-edge-' + (hash >>> 0).toString(16).padStart(8, '0');
 }
 
 export function buildMenaIntelligenceGraph(
