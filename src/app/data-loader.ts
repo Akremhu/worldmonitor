@@ -2326,8 +2326,21 @@ export class DataLoaderManager implements AppModule {
           threatLevel: c.threat?.level ?? 'info',
           timestamp: c.lastUpdated,
         }));
-      if (geoLocated.length > 0) {
-        this.ctx.map?.setNewsLocations(geoLocated);
+      const menaGeoLocated = SITE_VARIANT === 'mena'
+        ? getMenaIntelligenceStore().events
+            .filter((event) => Number.isFinite(event.location?.latitude) && Number.isFinite(event.location?.longitude))
+            .slice(0, 500)
+            .map((event) => ({
+              lat: event.location!.latitude!,
+              lon: event.location!.longitude!,
+              title: event.title,
+              threatLevel: 'info',
+              timestamp: new Date(event.lastUpdatedAt || event.timestamp),
+            }))
+        : [];
+
+      if (geoLocated.length > 0 || menaGeoLocated.length > 0) {
+        this.ctx.map?.setNewsLocations([...geoLocated, ...menaGeoLocated]);
       }
     } catch (error) {
       console.error('[App] Clustering failed, clusters unchanged:', error);
