@@ -3,6 +3,7 @@ import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/serv
 import { queryMenaEvents } from '@/services/mena-intelligence-query';
 import type { MenaEvent, MenaEventType, MenaConfidence } from '@/config/mena/events';
 import { getMenaSourcePolicy } from '@/config/mena/source-registry';
+import { selectMenaEvent } from '@/services/mena-event-selection';
 
 const COUNTRIES = [
   ['ALL', 'All MENA'],
@@ -215,6 +216,17 @@ export class MenaEventTimelinePanel extends Panel {
   private createEventRow(event: MenaEvent): HTMLElement {
     const row = document.createElement('article');
     row.className = 'mena-intel-event';
+    row.tabIndex = 0;
+    row.setAttribute('role', 'button');
+    row.setAttribute('aria-label', `Inspect event: ${event.title}`);
+    const openDetail = () => selectMenaEvent(event.id);
+    row.addEventListener('click', openDetail);
+    row.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openDetail();
+      }
+    });
 
     const top = document.createElement('div');
     top.className = 'mena-intel-event-top';
