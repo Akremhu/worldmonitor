@@ -36,13 +36,13 @@ export function menaEventToHistoryRecord(event) {
 
   const sources = Array.isArray(event.sources)
     ? event.sources.slice(0, 32).map((source) => ({
-        id: safeString(source?.id),
+        sourceId: safeString(source?.sourceId),
         name: safeString(source?.name),
         publishedAt: finiteOrUndefined(source?.publishedAt),
         fetchedAt: finiteOrUndefined(source?.fetchedAt),
         sourceTier: Number.isFinite(source?.sourceTier) ? source.sourceTier : undefined,
         url: safeString(source?.url),
-      })).filter((source) => source.id || source.name)
+      })).filter((source) => source.sourceId || source.sourceName)
     : [];
 
   const location = event.location && typeof event.location === 'object'
