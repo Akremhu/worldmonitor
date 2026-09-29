@@ -662,6 +662,8 @@ export const timeline = internalQuery({
     domain: v.optional(v.string()),
     country: v.optional(v.string()),
     eventId: v.optional(v.string()),
+    eventType: v.optional(v.string()),
+    entityId: v.optional(v.string()),
     from: v.optional(v.number()),
     to: v.optional(v.number()),
     limit: v.optional(v.number()),
@@ -675,7 +677,7 @@ export const timeline = internalQuery({
 
     const limit = clamp(args.limit ?? TIMELINE_DEFAULT_LIMIT, 1, TIMELINE_MAX_LIMIT);
     const { from, to } = args;
-    const needsEventFilter = args.eventId !== undefined;
+    const needsEventFilter = args.eventId !== undefined || args.eventType !== undefined || args.entityId !== undefined;
 
     // Over-fetch only when something is left to filter after the index range.
     const needsPostFilter = (args.domain !== undefined && args.country !== undefined) || needsEventFilter;
@@ -720,6 +722,11 @@ export const timeline = internalQuery({
       ? docs.filter((doc) => {
           if (args.country !== undefined && doc.country !== args.country) return false;
           if (args.eventId !== undefined && doc.metadata?.eventId !== args.eventId) return false;
+          if (args.eventType !== undefined && doc.metadata?.eventType !== args.eventType) return false;
+          if (args.entityId !== undefined) {
+            const ids = Array.isArray(doc.metadata?.entityIds) ? doc.metadata.entityIds : [];
+            if (!ids.includes(args.entityId)) return false;
+          }
           return true;
         })
       : docs;
