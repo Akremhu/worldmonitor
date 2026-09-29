@@ -113,3 +113,30 @@ export function clearMenaEventHistory(): void {
   versions.clear();
   fingerprints.clear();
 }
+
+
+/**
+ * Query durable MENA history through the server relay.
+ * The browser never receives Convex credentials or calls internal mutations.
+ */
+export async function queryDurableMenaEventHistory(
+  query: Pick<MenaEventHistoryQuery, 'countryCode' | 'since' | 'until' | 'limit'> = {},
+): Promise<MenaEvent[]> {
+  const response = await fetch('/api/mena-history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      country: query.countryCode,
+      from: query.since,
+      to: query.until,
+      limit: Math.min(query.limit ?? 100, 100),
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`MENA historical API returned HTTP ${response.status}`);
+  }
+
+  const payload = await response.json();
+  return Array.isArray(payload?.records) ? payload.records as MenaEvent[] : [];
+}
