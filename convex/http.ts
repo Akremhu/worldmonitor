@@ -2126,6 +2126,7 @@ function readIntelQueryScope(body: Record<string, unknown>):
     scope: {
       domain: domain.value,
       country: country.value,
+      eventId: eventId.value,
       from: from.value,
       to: to.value,
       limit: limit.value,
