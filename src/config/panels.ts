@@ -1149,10 +1149,85 @@ const ENERGY_MOBILE_MAP_LAYERS: MapLayers = {
 // UNIFIED PANEL REGISTRY
 // ============================================
 
-type PanelVariant = 'full' | 'tech' | 'finance' | 'commodity' | 'energy' | 'happy';
+type PanelVariant = 'full' | 'mena' | 'tech' | 'finance' | 'commodity' | 'energy' | 'happy';
+
+const MENA_PANELS: Record<string, PanelConfig> = {
+  map: { name: 'MENA Intelligence Map', enabled: true, priority: 1 },
+  'live-news': { name: 'MENA Live News', enabled: true, priority: 1 },
+  insights: { name: 'AI Regional Insights', enabled: true, priority: 1 },
+  'threat-timeline': { name: 'Regional Event Timeline', enabled: true, priority: 1 },
+  'strategic-posture': { name: 'Regional Strategic Posture', enabled: true, priority: 1 },
+  intel: { name: 'MENA Intelligence Feed', enabled: true, priority: 1 },
+  'gdelt-intel': { name: 'Live Regional Intelligence', enabled: true, priority: 1 },
+  cii: { name: 'Regional Stability Indicators', enabled: true, priority: 1 },
+  'strategic-risk': { name: 'Regional Risk Overview', enabled: true, priority: 1 },
+  cascade: { name: 'Infrastructure Cascade', enabled: true, priority: 1 },
+  'military-correlation': { name: 'Military Activity', enabled: true, priority: 1 },
+  'escalation-correlation': { name: 'Escalation Monitor', enabled: true, priority: 1 },
+  'economic-correlation': { name: 'Economic Impact Signals', enabled: true, priority: 1 },
+  middleeast: { name: 'MENA Regional News', enabled: true, priority: 1 },
+  yemen: { name: 'Yemen', enabled: true, priority: 1 },
+  gulf: { name: 'Gulf', enabled: true, priority: 1 },
+  iran: { name: 'Iran', enabled: true, priority: 1 },
+  israelPalestine: { name: 'Israel & Palestine', enabled: true, priority: 1 },
+  redSea: { name: 'Red Sea & Gulf of Aden', enabled: true, priority: 1 },
+  levant: { name: 'Levant', enabled: true, priority: 1 },
+  iraq: { name: 'Iraq', enabled: true, priority: 1 },
+  regionalEconomy: { name: 'MENA Economy', enabled: true, priority: 2 },
+  'ucdp-events': { name: 'Conflict Events', enabled: true, priority: 1 },
+  displacement: { name: 'Displacement & Humanitarian', enabled: true, priority: 2 },
+  'security-advisories': { name: 'Security Advisories', enabled: true, priority: 2 },
+  'sanctions-pressure': { name: 'Sanctions & Trade Pressure', enabled: true, priority: 2 },
+  'airline-intel': { name: 'Aviation Intelligence', enabled: true, priority: 1 },
+  'telegram-intel': { name: 'Telegram Intelligence', enabled: true, priority: 2 },
+  'x-intel': { name: 'Open Social Intelligence', enabled: true, priority: 2 },
+  'hormuz-tracker': { name: 'Maritime Chokepoints', enabled: true, priority: 1 },
+  'energy-risk-overview': { name: 'Regional Energy Risk', enabled: true, priority: 1 },
+  'energy-complex': { name: 'MENA Energy Complex', enabled: true, priority: 1 },
+  'oil-inventories': { name: 'Oil & Gas Inventories', enabled: true, priority: 2 },
+  'supply-chain': { name: 'Regional Supply Chains', enabled: true, priority: 1 },
+  commodities: { name: 'Commodities', enabled: true, priority: 2 },
+  economic: { name: 'Regional Economy', enabled: true, priority: 2 },
+  'gulf-economies': { name: 'Gulf Economies', enabled: true, priority: 2 },
+  climate: { name: 'Climate & Weather', enabled: true, priority: 2 },
+  monitors: { name: 'My Monitors', enabled: true, priority: 3 },
+};
+
+const MENA_MAP_LAYERS: MapLayers = {
+  gpsJamming: true, satellites: false, conflicts: true, bases: true, cables: true,
+  pipelines: true, hotspots: true, ais: true, nuclear: true, irradiators: false,
+  sanctions: true, weather: true, canadaRoads: false, canadaAlerts: false, economic: true,
+  waterways: true, outages: true, cyberThreats: true, datacenters: false, protests: true,
+  flights: true, military: true, natural: true, spaceports: false, minerals: true,
+  fires: true, ucdpEvents: true, displacement: true, climate: true,
+  startupHubs: false, cloudRegions: false, accelerators: false, techHQs: false, techEvents: false,
+  stockExchanges: true, financialCenters: true, centralBanks: true, commodityHubs: true,
+  gulfInvestments: true, positiveEvents: false, kindness: false, happiness: false,
+  speciesRecovery: false, renewableInstallations: true, tradeRoutes: true, iranAttacks: false,
+  ciiChoropleth: true, resilienceScore: true, dayNight: false, miningSites: false,
+  processingPlants: false, commodityPorts: true, webcams: false, diseaseOutbreaks: true,
+  storageFacilities: true, fuelShortages: true, liveTankers: true,
+};
+
+const MENA_MOBILE_MAP_LAYERS: MapLayers = {
+  gpsJamming: false, satellites: false, conflicts: true, bases: false, cables: false,
+  pipelines: true, hotspots: true, ais: false, nuclear: false, irradiators: false,
+  sanctions: true, weather: true, canadaRoads: false, canadaAlerts: false, economic: false,
+  waterways: true, outages: true, cyberThreats: false, datacenters: false, protests: false,
+  flights: false, military: false, natural: true, spaceports: false, minerals: false,
+  fires: false, ucdpEvents: true, displacement: true, climate: false,
+  startupHubs: false, cloudRegions: false, accelerators: false, techHQs: false, techEvents: false,
+  stockExchanges: false, financialCenters: false, centralBanks: false, commodityHubs: false,
+  gulfInvestments: false, positiveEvents: false, kindness: false, happiness: false,
+  speciesRecovery: false, renewableInstallations: false, tradeRoutes: false, iranAttacks: false,
+  ciiChoropleth: false, resilienceScore: false, dayNight: false, miningSites: false,
+  processingPlants: false, commodityPorts: true, webcams: false, diseaseOutbreaks: false,
+  storageFacilities: false, fuelShortages: false, liveTankers: false,
+};
 
 const VARIANT_PANEL_CONFIGS: Record<PanelVariant, Record<string, PanelConfig>> = {
   full: FULL_PANELS,
+  mena: MENA_PANELS,
   tech: TECH_PANELS,
   finance: FINANCE_PANELS,
   commodity: COMMODITY_PANELS,
@@ -1185,6 +1260,7 @@ export const ALL_PANELS: Record<string, PanelConfig> = {
 /** Per-variant canonical panel order (keys = which panels are enabled by default). */
 export const VARIANT_DEFAULTS: Record<string, string[]> = {
   full:      Object.keys(VARIANT_PANEL_CONFIGS.full),
+  mena:      Object.keys(VARIANT_PANEL_CONFIGS.mena),
   tech:      Object.keys(VARIANT_PANEL_CONFIGS.tech),
   finance:   Object.keys(VARIANT_PANEL_CONFIGS.finance),
   commodity: Object.keys(VARIANT_PANEL_CONFIGS.commodity),
@@ -1539,6 +1615,28 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
     labelKey: 'header.panelCatDataTracking',
     panelKeys: ['monitors', 'satellite-fires', 'ucdp-events', 'displacement', 'climate', 'climate-news', 'population-exposure', 'security-advisories', 'toronto-safety', 'radiation-watch', 'oref-sirens', 'world-clock', 'tech-readiness', 'disease-outbreaks', 'fao-food-price-index', 'grocery-basket', 'defense-patents'],
     variants: ['full', 'energy'],
+  },
+
+  // MENA regional variant
+  menaSituation: {
+    labelKey: 'header.panelCatIntelligence',
+    panelKeys: ['cii', 'strategic-risk', 'threat-timeline', 'intel', 'gdelt-intel', 'telegram-intel', 'x-intel', 'cross-source-signals', 'security-advisories'],
+    variants: ['mena'],
+  },
+  menaSecurity: {
+    labelKey: 'header.panelCatCorrelation',
+    panelKeys: ['military-correlation', 'escalation-correlation', 'ucdp-events', 'displacement', 'airline-intel'],
+    variants: ['mena'],
+  },
+  menaRegional: {
+    labelKey: 'header.panelCatRegionalNews',
+    panelKeys: ['middleeast', 'yemen', 'gulf', 'iran', 'israelPalestine', 'redSea', 'levant', 'iraq'],
+    variants: ['mena'],
+  },
+  menaEconomy: {
+    labelKey: 'header.panelCatMarketsFinance',
+    panelKeys: ['economic', 'gulf-economies', 'commodities', 'energy-risk-overview', 'energy-complex', 'oil-inventories', 'supply-chain', 'hormuz-tracker', 'sanctions-pressure'],
+    variants: ['mena'],
   },
 
   // Tech variant
