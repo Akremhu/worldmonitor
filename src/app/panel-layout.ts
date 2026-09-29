@@ -300,6 +300,7 @@ export const DEFERRED_PANEL_NATURAL_FOOTPRINTS: Readonly<Record<string, Deferred
   'mena-event-intelligence': { rowSpan: 2, className: 'panel-wide' },
   'mena-event-detail': { rowSpan: 3, className: 'panel-wide' },
   'mena-entity-monitor': { rowSpan: 2, className: 'panel-wide' },
+  'mena-cross-domain': { rowSpan: 2, className: 'panel-wide' },
   'trade-policy': { rowSpan: 2 },
   'ucdp-events': { rowSpan: 2 },
   'windy-webcams': { className: 'panel-wide' },
