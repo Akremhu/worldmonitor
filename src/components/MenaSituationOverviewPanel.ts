@@ -1,0 +1,148 @@
+import { Panel } from './Panel';
+import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
+import { MENA_SOURCE_HEALTH_POLICIES, getMenaFreshnessState } from '@/config/mena/source-health';
+
+const COUNTRIES = [
+  ['YE', 'Yemen'], ['SA', 'Saudi Arabia'], ['AE', 'UAE'], ['OM', 'Oman'],
+  ['QA', 'Qatar'], ['BH', 'Bahrain'], ['KW', 'Kuwait'], ['IQ', 'Iraq'],
+  ['IR', 'Iran'], ['IL', 'Israel'], ['PS', 'Palestine'], ['JO', 'Jordan'],
+  ['LB', 'Lebanon'], ['SY', 'Syria'], ['TR', 'Türkiye'], ['EG', 'Egypt'],
+] as const;
+
+const EVENT_TYPES = [
+  'conflict', 'strike', 'explosion', 'protest', 'arrest', 'diplomatic',
+  'military_movement', 'airspace', 'maritime', 'cyber', 'infrastructure',
+  'energy', 'economic', 'humanitarian', 'natural_disaster', 'other',
+] as const;
+
+function age(timestamp: number): string {
+  if (!timestamp) return '—';
+  const minutes = Math.max(0, Math.floor((Date.now() - timestamp) / 60_000));
+  if (minutes < 60) return `${minutes}m`;
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}h`;
+  return `${Math.floor(minutes / 1440)}d`;
+}
+
+function countByCountry(events: ReturnType<typeof getMenaIntelligenceStore>['events'], code: string): number {
+  return events.filter((event) => event.location?.countryCode === code || event.tags?.includes(code)).length;
+}
+
+export class MenaSituationOverviewPanel extends Panel {
+  private body: HTMLElement;
+  private unsubscribe: (() => void) | null = null;
+  private timer: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    super({
+      id: 'mena-situation-overview',
+      title: 'MENA Situation Overview',
+      infoTooltip: 'Current regional event activity, event-type distribution and source freshness. This is descriptive OSINT aggregation, not a risk or political judgment.',
+      showCount: true,
+      className: 'panel-wide',
+      collapsible: true,
+    });
+
+    this.body = document.createElement('div');
+    this.body.className = 'mena-situation-body';
+    this.content.appendChild(this.body);
+    this.render();
+
+    this.unsubscribe = subscribeMenaIntelligenceStore(() => {
+      if (this.timer) clearTimeout(this.timer);
+      this.timer = setTimeout(() => this.render(), 150);
+    });
+  }
+
+  override destroy(): void {
+    this.unsubscribe?.();
+    this.unsubscribe = null;
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
+    super.destroy();
+  }
+
+  private render(): void {
+    const store = getMenaIntelligenceStore();
+    const events = store.events;
+    const now = Date.now();
+    const last24h = events.filter((e) => now - e.timestamp <= 86_400_000);
+    const countries = COUNTRIES.map(([code, name]) => ({
+      code,
+      name,
+      count: countByCountry(last24h, code),
+    })).sort((a, b) => b.count - a.count);
+
+    const typeCounts = EVENT_TYPES
+      .map((type) => [type, last24h.filter((e) => e.eventType === type).length] as const)
+      .filter(([, count]) => count > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8);
+
+    const sourceRows = MENA_SOURCE_HEALTH_POLICIES.map((policy) => {
+      const sourceEvents = events.filter((e) => e.sourceIds.includes(policy.id));
+      const lastSeen = sourceEvents.reduce((max, event) => Math.max(max, event.lastUpdatedAt || event.timestamp), 0);
+      const state = getMenaFreshnessState(lastSeen, policy);
+      return { policy, state, lastSeen, events: sourceEvents.length };
+    }).sort((a, b) => {
+      const rank = { LIVE: 0, FRESH: 1, AGING: 2, STALE: 3, DEAD: 4 } as const;
+      return rank[a.state] - rank[b.state] || b.lastSeen - a.lastSeen;
+    });
+
+    this.setCount(events.length);
+    this.body.replaceChildren();
+
+    const stats = document.createElement('div');
+    stats.className = 'mena-situation-stats';
+    for (const [label, value] of [
+      ['Events 24h', String(last24h.length)],
+      ['Entities', String(store.entities.length)],
+      ['Sources', String(MENA_SOURCE_HEALTH_POLICIES.length)],
+      ['Updated', store.updatedAt ? age(store.updatedAt) + ' ago' : '—'],
+    ]) {
+      const card = document.createElement('div');
+      card.className = 'mena-situation-stat';
+      card.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
+      stats.appendChild(card);
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'mena-situation-grid';
+
+    const countrySection = document.createElement('section');
+    countrySection.className = 'mena-situation-section';
+    countrySection.innerHTML = '<h4>Activity by country · 24h</h4>';
+    for (const row of countries.slice(0, 8)) {
+      const item = document.createElement('div');
+      item.className = 'mena-situation-bar-row';
+      item.innerHTML = `<span>${row.name}</span><i><b style="width:${last24h.length ? Math.min(100, row.count / Math.max(1, countries[0].count) * 100) : 0}%"></b></i><em>${row.count}</em>`;
+      countrySection.appendChild(item);
+    }
+
+    const typeSection = document.createElement('section');
+    typeSection.className = 'mena-situation-section';
+    typeSection.innerHTML = '<h4>Event types · 24h</h4>';
+    for (const [type, count] of typeCounts) {
+      const item = document.createElement('div');
+      item.className = 'mena-situation-type';
+      item.innerHTML = `<span>${type.replace(/_/g, ' ')}</span><strong>${count}</strong>`;
+      typeSection.appendChild(item);
+    }
+    if (!typeCounts.length) {
+      typeSection.insertAdjacentHTML('beforeend', '<div class="mena-situation-empty">Waiting for regional events…</div>');
+    }
+
+    grid.append(countrySection, typeSection);
+
+    const sourceSection = document.createElement('section');
+    sourceSection.className = 'mena-situation-sources';
+    sourceSection.innerHTML = '<h4>Source freshness</h4>';
+    for (const row of sourceRows.slice(0, 10)) {
+      const item = document.createElement('div');
+      item.className = 'mena-situation-source';
+      item.innerHTML = `<span>${row.policy.name}</span><b class="mena-source-${row.state.toLowerCase()}">${row.state}</b><em>${row.lastSeen ? age(row.lastSeen) + ' ago' : 'no events'}</em>`;
+      sourceSection.appendChild(item);
+    }
+
+    this.body.append(stats, grid, sourceSection);
+  }
+}
