@@ -8,6 +8,16 @@
 
 import { appendSeedHistory } from './_seed-history.mjs';
 
+function fingerprint(value) {
+  const input = JSON.stringify(value);
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(36);
+}
+
 export const MENA_HISTORY_DOMAIN = 'mena';
 export const MENA_HISTORY_RESOURCE = 'events';
 
@@ -81,7 +91,7 @@ export function menaEventToHistoryRecord(event) {
   const sourceUrl = sources.find((source) => source?.url)?.url;
 
   return {
-    dedupeKey: `mena:events:${id}`,
+    dedupeKey: `mena:events:${id}:${fingerprint({ occurredAt, title, summary: event.summary, sources })}`,
     country,
     category,
     title,
