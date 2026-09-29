@@ -74,6 +74,9 @@ export default async function handler(request) {
   const country = typeof body?.country === 'string' && body.country.trim()
     ? body.country.trim()
     : undefined;
+  const eventId = typeof body?.eventId === 'string' && body.eventId.trim()
+    ? body.eventId.trim()
+    : undefined;
   const from = finiteNumber(body?.from);
   const to = finiteNumber(body?.to);
   const requestedLimit = finiteNumber(body?.limit);
@@ -88,6 +91,7 @@ export default async function handler(request) {
     body: JSON.stringify({
       domain: 'mena',
       country,
+      eventId,
       from,
       to,
       limit,
