@@ -3193,8 +3193,9 @@ export class PanelLayoutManager implements AppModule {
     this.lazyDefaultPanel('mena-event-detail', () => import('@/components/MenaEventDetailPanel'), 'MenaEventDetailPanel');
     this.lazyDefaultPanel('mena-correlation', () => import('@/components/MenaCorrelationPanel'), 'MenaCorrelationPanel');
     this.lazyDefaultPanel('mena-entity-monitor', () => import('@/components/MenaEntityMonitorPanel'), 'MenaEntityMonitorPanel'),
-    lazyDefaultPanel('mena-historical-intelligence', () => import('@/components/MenaHistoricalIntelligencePanel'), 'MenaHistoricalIntelligencePanel'),
-    lazyDefaultPanel('mena-operational-activity', () => import('@/components/MenaOperationalActivityPanel'), 'MenaOperationalActivityPanel');
+    this.lazyDefaultPanel('mena-historical-intelligence', () => import('@/components/MenaHistoricalIntelligencePanel'), 'MenaHistoricalIntelligencePanel');
+    this.lazyDefaultPanel('mena-operational-activity', () => import('@/components/MenaOperationalActivityPanel'), 'MenaOperationalActivityPanel');
+    this.lazyDefaultPanel('mena-cross-domain', () => import('@/components/MenaCrossDomainPanel'), 'MenaCrossDomainPanel');
     }
 
     // Global Giving panel (all variants)
