@@ -135,28 +135,6 @@ import { getResilienceRanking } from '@/services/resilience';
 import { ingestMenaNewsItems, setMenaEvents } from '@/services/mena-event-pipeline';\nimport { enrichMenaEventsWithEntities } from '@/services/mena-event-enrichment';
 import { updateMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 
-async function persistMenaHistoricalEvents(events: readonly import('@/config/mena/events').MenaEvent[]): Promise<void> {
-  if (!events.length) return;
-  try {
-    const response = await fetch('/api/mena-history', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: Math.min(...events.map((event) => event.timestamp)),
-        to: Math.max(...events.map((event) => event.timestamp)),
-        limit: Math.min(events.length, 100),
-        records: events.map((event) => event.id),
-      }),
-      keepalive: true,
-    });
-    if (!response.ok && import.meta.env.DEV) {
-      console.warn('[MENA] historical persistence unavailable:', response.status);
-    }
-  } catch (error) {
-    // Historical persistence must never block the live dashboard.
-    if (import.meta.env.DEV) console.warn('[MENA] historical persistence failed:', error);
-  }
-}
 import { buildResilienceChoroplethMap } from '@/components/resilience-choropleth-utils';
 import { enrichEventsWithExposure } from '@/services/population-exposure';
 import { debounce, getCircuitBreakerCooldownInfo, loadFromStorage, saveToStorage } from '@/utils';
@@ -2265,7 +2243,6 @@ export class DataLoaderManager implements AppModule {
       const enriched = enrichMenaEventsWithEntities(menaEvents);
       setMenaEvents(enriched.events);
       updateMenaIntelligenceStore(enriched.events, enriched.entities);
-      void persistMenaHistoricalEvents(enriched.events);
       if (import.meta.env.DEV) {
         console.info(`[MENA] normalized ${enriched.events.length} events and ${enriched.entities.length} entities from ${collectedNews.length} news items`);
       }
