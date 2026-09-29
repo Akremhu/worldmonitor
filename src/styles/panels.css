@@ -4000,3 +4000,6 @@ a.hub-top-story {
   .mena-detail-grid { grid-template-columns:1fr; }
   .mena-detail-source { grid-template-columns:1fr; }
 }
+
+/* MENA event correlation */
+.mena-correlation-body{display:flex;flex-direction:column;gap:8px}.mena-correlation-row{border:1px solid var(--border);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:7px}.mena-correlation-header{display:flex;justify-content:space-between;gap:8px}.mena-correlation-relation,.mena-correlation-score{font-size:10px}.mena-correlation-relation{color:var(--text);text-transform:uppercase;letter-spacing:.04em}.mena-correlation-score{color:var(--text-dim)}.mena-correlation-events{display:flex;flex-direction:column;gap:5px}.mena-correlation-event{appearance:none;border:0;background:transparent;color:var(--text);text-align:start;padding:5px 0;cursor:pointer;font:inherit;font-size:11px}.mena-correlation-event:hover{color:var(--accent)}.mena-correlation-reasons{font-size:10px;color:var(--text-dim);line-height:1.45}
