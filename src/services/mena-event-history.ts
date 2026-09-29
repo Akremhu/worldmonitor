@@ -20,7 +20,7 @@ const versions = new Map<string, MenaEventVersion[]>();
 const fingerprints = new Map<string, string>();
 
 function stableValue(value: unknown): string {
-  return JSON.stringify(value, Object.keys(value as object).sort());
+  return JSON.stringify(value);
 }
 
 function fingerprint(event: MenaEvent): string {
