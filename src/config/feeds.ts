@@ -1103,8 +1103,62 @@ const ENERGY_FEEDS: Record<string, Feed[]> = {
   ],
 };
 
+// MENA-specific preset: keep the existing global catalog intact, but make the
+// regional variant deliberate about geography and signal type.
+const MENA_FEEDS: Record<string, Feed[]> = {
+  middleeast: FULL_FEEDS.middleeast,
+  yemen: [
+    { name: 'Yemen News', url: rss('https://news.google.com/rss/search?q=(Yemen+OR+Sanaa+OR+Hodeidah+OR+Aden+OR+Taiz)+when:1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Sana\'a Center', url: rss('https://sanaacenter.org/feed/') },
+    { name: 'Yemen Online', url: rss('https://news.google.com/rss/search?q=site%3Ayemenonline.info+when%3A2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'UN Yemen', url: rss('https://news.google.com/rss/search?q=site%3Aun.org+Yemen+when%3A3d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'OCHA Yemen', url: rss('https://news.google.com/rss/search?q=site%3Aunocha.org+Yemen+when%3A7d&hl=en-US&gl=US&ceid=US:en') },
+  ],
+  gulf: [
+    { name: 'Gulf News', url: rss('https://news.google.com/rss/search?q=(Saudi+Arabia+OR+UAE+OR+Qatar+OR+Kuwait+OR+Bahrain+OR+Oman)+when:1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Arab News', url: rss('https://news.google.com/rss/search?q=site%3Aarabnews.com+when%3A1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'The National', url: rss('https://news.google.com/rss/search?q=site%3Athenationalnews.com+when%3A1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Oman Observer', url: rss('https://www.omanobserver.om/rssFeed/1') },
+  ],
+  iran: [
+    { name: 'Iran News', url: rss('https://news.google.com/rss/search?q=(Iran+OR+Tehran+OR+IRGC)+when:1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'IRNA', url: rss('https://en.irna.ir/rss') },
+    { name: 'Mehr News', url: rss('https://en.mehrnews.com/rss') },
+    { name: 'BBC Persian', url: rss('https://feeds.bbci.co.uk/persian/rss.xml') },
+  ],
+  israelPalestine: [
+    { name: 'Israel Palestine News', url: rss('https://news.google.com/rss/search?q=(Israel+OR+Palestine+OR+Gaza+OR+West+Bank)+when:1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Jerusalem Post', url: rss('https://www.jpost.com/rss/rssfeedsheadlines.aspx') },
+    { name: 'Ynetnews', url: rss('https://www.ynetnews.com/Integration/StoryRss3089.xml') },
+    { name: 'WAFA English', url: rss('https://news.google.com/rss/search?q=site%3Aenglish.wafa.ps+when%3A1d&hl=en-US&gl=US&ceid=US:en') },
+  ],
+  redSea: [
+    { name: 'Red Sea', url: rss('https://news.google.com/rss/search?q=(Red+Sea+OR+Bab+el-Mandeb+OR+Gulf+of+Aden)+when:1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Maritime Security', url: rss('https://news.google.com/rss/search?q=(maritime+security+OR+shipping+OR+tanker)+Red+Sea+when:2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Suez Canal', url: rss('https://news.google.com/rss/search?q=%22Suez+Canal%22+when%3A2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'UKMTO', url: rss('https://news.google.com/rss/search?q=UKMTO+when%3A2d&hl=en-US&gl=US&ceid=US:en') },
+  ],
+  levant: [
+    { name: 'Levant News', url: rss('https://news.google.com/rss/search?q=(Syria+OR+Lebanon+OR+Jordan)+when:1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Syria Direct', url: rss('https://syriadirect.org/feed/') },
+    { name: 'L\'Orient Today', url: rss('https://news.google.com/rss/search?q=site%3Alorientlejour.com+Lebanon+when%3A2d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Rudaw', url: rss('https://news.google.com/rss/search?q=site%3Arudaw.net+when%3A2d&hl=en&gl=US&ceid=US:en') },
+  ],
+  iraq: [
+    { name: 'Iraq News', url: rss('https://news.google.com/rss/search?q=(Iraq+OR+Baghdad+OR+Erbil)+when:1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Rudaw Iraq', url: rss('https://news.google.com/rss/search?q=site%3Arudaw.net+Iraq+when%3A2d&hl=en&gl=US&ceid=US:en') },
+  ],
+  regionalEconomy: [
+    { name: 'MENA Economy', url: rss('https://news.google.com/rss/search?q=(Saudi+OR+UAE+OR+Qatar+OR+Egypt+OR+Iran+OR+Iraq)+economy+when:1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Oil & OPEC', url: rss('https://news.google.com/rss/search?q=(OPEC+OR+oil+OR+Brent+OR+WTI)+Middle+East+when:1d&hl=en-US&gl=US&ceid=US:en') },
+    { name: 'Gulf Business', url: rss('https://news.google.com/rss/search?q=(Gulf+OR+GCC)+business+when:1d&hl=en-US&gl=US&ceid=US:en') },
+  ],
+};
+
 // Variant-aware exports
-export const FEEDS = SITE_VARIANT === 'tech'
+export const FEEDS = SITE_VARIANT === 'mena'
+  ? MENA_FEEDS
+  : SITE_VARIANT === 'tech'
   ? TECH_FEEDS
   : SITE_VARIANT === 'finance'
     ? FINANCE_FEEDS
@@ -1142,6 +1196,8 @@ export const CANONICAL_FEEDS: Record<string, Feed[]> = mergeCanonicalFeeds([
   COMMODITY_FEEDS,
   ENERGY_FEEDS,
   HAPPY_FEEDS,
+  ENERGY_FEEDS,
+  MENA_FEEDS,
   ON_DEMAND_FEEDS,
 ]);
 
