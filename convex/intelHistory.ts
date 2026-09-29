@@ -192,6 +192,7 @@ const appendRecordValidator = v.object({
   title: v.string(),
   summary: v.optional(v.string()),
   sourceUrl: v.optional(v.string()),
+  metadata: v.optional(v.any()),
   occurredAt: v.number(),
   embedding: v.array(v.float64()),
 });
