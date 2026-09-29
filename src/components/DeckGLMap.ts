@@ -139,7 +139,7 @@ import type { GetChokepointStatusResponse } from '@/services/supply-chain';
 import type { MenaEvent } from '@/config/mena/events';
 import type { MenaEntity } from '@/config/mena/entities';
 import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
-import { selectMenaEvent, getSelectedMenaEventId } from '@/services/mena-event-selection';
+import { selectMenaEvent, getSelectedMenaEventId, subscribeMenaEventSelection } from '@/services/mena-event-selection';
 import type { ChinaCorridorControlTower } from '../../shared/china-corridor-control-towers';
 import {
   projectChinaCorridorOverlay,
@@ -669,6 +669,7 @@ export class DeckGLMap {
   private scenarioState: ScenarioVisualState | null = null;
   private selectedChinaCorridorOverlay: ChinaCorridorOverlayProjection | null = null;
   private menaStoreUnsubscribe: (() => void) | null = null;
+  private menaSelectionUnsubscribe: (() => void) | null = null;
   private affectedIso2Set: Set<string> = new Set();
   private positiveEvents: PositiveGeoEvent[] = [];
   private kindnessPoints: KindnessPoint[] = [];
@@ -926,6 +927,9 @@ export class DeckGLMap {
 
     if (SITE_VARIANT === 'mena') {
       this.menaStoreUnsubscribe = subscribeMenaIntelligenceStore(() => {
+        this.rafUpdateLayers();
+      });
+      this.menaSelectionUnsubscribe = subscribeMenaEventSelection(() => {
         this.rafUpdateLayers();
       });
     }
@@ -8457,6 +8461,8 @@ export class DeckGLMap {
     this._unsubscribeEntitlement = null;
     this.menaStoreUnsubscribe?.();
     this.menaStoreUnsubscribe = null;
+    this.menaSelectionUnsubscribe?.();
+    this.menaSelectionUnsubscribe = null;
     window.removeEventListener('theme-changed', this.handleThemeChange);
     window.removeEventListener('map-theme-changed', this.handleMapThemeChange);
     this.tradeReducedMotionMedia?.removeEventListener('change', this.handleTradeMotionPreferenceChange);
