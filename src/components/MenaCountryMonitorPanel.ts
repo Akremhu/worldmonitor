@@ -60,7 +60,6 @@ export class MenaCountryMonitorPanel extends Panel {
     const events = store.events;
     const rows = COUNTRIES.map(([code, name]) => {
       const last24h = eventCount(events, code, now - 86_400_000);
-      const previous24h = eventCount(events, code, now - 172_800_000) - last24h;
       const last7d = eventCount(events, code, now - 7 * 86_400_000);
       const entities = new Set(
         events
