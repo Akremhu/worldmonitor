@@ -1,0 +1,31 @@
+name: MENA Intelligence Collector
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: mena-intelligence-collector
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Collect and publish MENA intelligence
+        env:
+          CONVEX_SITE_URL: ${{ secrets.CONVEX_SITE_URL }}
+          CONVEX_URL: ${{ secrets.CONVEX_URL }}
+          CONVEX_SERVER_SHARED_SECRET: ${{ secrets.CONVEX_SERVER_SHARED_SECRET }}
+        run: node scripts/seed-mena-news.mjs
