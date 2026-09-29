@@ -298,6 +298,7 @@ export const DEFERRED_PANEL_NATURAL_FOOTPRINTS: Readonly<Record<string, Deferred
   'mena-country-monitor': { rowSpan: 2, className: 'panel-wide' },
   'mena-event-map': { rowSpan: 3, className: 'panel-wide' },
   'mena-event-intelligence': { rowSpan: 2, className: 'panel-wide' },
+  'mena-event-detail': { rowSpan: 3, className: 'panel-wide' },
   'mena-entity-monitor': { rowSpan: 2, className: 'panel-wide' },
   'trade-policy': { rowSpan: 2 },
   'ucdp-events': { rowSpan: 2 },
@@ -3188,6 +3189,7 @@ export class PanelLayoutManager implements AppModule {
     this.lazyDefaultPanel('mena-country-monitor', () => import('@/components/MenaCountryMonitorPanel'), 'MenaCountryMonitorPanel');
     this.lazyDefaultPanel('mena-event-map', () => import('@/components/MenaEventMapPanel'), 'MenaEventMapPanel');
     this.lazyDefaultPanel('mena-event-intelligence', () => import('@/components/MenaEventTimelinePanel'), 'MenaEventTimelinePanel');
+    this.lazyDefaultPanel('mena-event-detail', () => import('@/components/MenaEventDetailPanel'), 'MenaEventDetailPanel');
     this.lazyDefaultPanel('mena-entity-monitor', () => import('@/components/MenaEntityMonitorPanel'), 'MenaEntityMonitorPanel');
     }
 
