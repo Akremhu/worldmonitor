@@ -1893,6 +1893,9 @@ export default defineSchema({
     ingestedAt: v.number(),
     runId: v.string(),
     dedupeKey: v.string(),
+    // Optional structured provenance for specialized domains such as MENA.
+    // Kept outside indexed fields so existing history rows remain unchanged.
+    metadata: v.optional(v.any()),
     embedding: v.array(v.float64()),
   })
     .index("by_dedupeKey", ["dedupeKey"])
