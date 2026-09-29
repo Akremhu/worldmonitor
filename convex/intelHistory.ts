@@ -661,6 +661,7 @@ export const timeline = internalQuery({
   args: {
     domain: v.optional(v.string()),
     country: v.optional(v.string()),
+    eventId: v.optional(v.string()),
     from: v.optional(v.number()),
     to: v.optional(v.number()),
     limit: v.optional(v.number()),
@@ -674,11 +675,12 @@ export const timeline = internalQuery({
 
     const limit = clamp(args.limit ?? TIMELINE_DEFAULT_LIMIT, 1, TIMELINE_MAX_LIMIT);
     const { from, to } = args;
+    const needsEventFilter = args.eventId !== undefined;
 
     // Over-fetch only when something is left to filter after the index range.
-    const needsPostFilter = args.domain !== undefined && args.country !== undefined;
+    const needsPostFilter = (args.domain !== undefined && args.country !== undefined) || needsEventFilter;
     const scanLimit = needsPostFilter
-      ? Math.min(limit * POST_FILTER_OVERFETCH, TIMELINE_MAX_SCAN)
+      ? Math.min(Math.max(limit * POST_FILTER_OVERFETCH, 50), TIMELINE_MAX_SCAN)
       : limit;
 
     // Both indexes are (scopeField, occurredAt), so the occurredAt bounds are
@@ -715,7 +717,11 @@ export const timeline = internalQuery({
             .take(scanLimit);
 
     const matched = needsPostFilter
-      ? docs.filter((doc) => doc.country === args.country)
+      ? docs.filter((doc) => {
+          if (args.country !== undefined && doc.country !== args.country) return false;
+          if (args.eventId !== undefined && doc.metadata?.eventId !== args.eventId) return false;
+          return true;
+        })
       : docs;
 
     return {
