@@ -3960,3 +3960,17 @@ a.hub-top-story {
 .mena-country-footer{padding:7px 10px;border-top:1px solid var(--border-subtle,rgba(255,255,255,.08));color:var(--text-dim,#697386);font-size:9px}
 .mena-country-empty{padding:24px 10px;text-align:center;color:var(--text-dim,#7d8590);font-size:10px}
 @media(max-width:700px){.mena-country-header,.mena-country-row{grid-template-columns:minmax(110px,1.5fr) 40px 40px 55px 55px;gap:5px;font-size:9px}.mena-country-row strong{font-size:10px}}
+
+
+/* MENA Event Map */
+.mena-map-body{display:flex;flex-direction:column}
+.mena-map-meta{display:flex;gap:14px;padding:7px 10px;border-bottom:1px solid var(--border-subtle,rgba(255,255,255,.08));font-size:9px;color:var(--text-dim,#8b93a1);text-transform:uppercase;letter-spacing:.04em}
+.mena-map-canvas{padding:8px 10px;overflow:hidden}
+.mena-map-canvas svg{display:block;width:100%;height:auto;min-height:280px;color:var(--text,#d7dde5);background:var(--bg-elevated,rgba(255,255,255,.02));border:1px solid var(--border-subtle,rgba(255,255,255,.07));border-radius:5px}
+.mena-map-surface{fill:rgba(255,255,255,.015)}
+.mena-map-grid{stroke:rgba(255,255,255,.055);stroke-width:1;fill:none}
+.mena-map-country{fill:var(--text-dim,#687386);opacity:.8}
+.mena-map-label{fill:var(--text-dim,#8b93a1);font-size:9px;font-family:inherit}
+.mena-map-events circle{filter:drop-shadow(0 0 3px currentColor)}
+.mena-map-note{padding:0 10px 8px;color:var(--text-dim,#697386);font-size:9px;line-height:1.4}
+@media(max-width:700px){.mena-map-meta{gap:7px;overflow:hidden;white-space:nowrap}.mena-map-meta span{overflow:hidden;text-overflow:ellipsis}.mena-map-canvas svg{min-height:230px}}
