@@ -739,6 +739,10 @@ export interface MapLayers {
   /** Live tanker positions (AIS ship type 80-89) inside chokepoint bboxes.
    *  Refreshed every 60s via getVesselSnapshot. Energy Atlas parity-push. */
   liveTankers?: boolean;
+  /** Canonical MENA intelligence event points (regional variant). */
+  menaEvents?: boolean;
+  /** Canonical MENA entity locations when coordinates are available. */
+  menaEntities?: boolean;
 }
 
 export interface AIDataCenter {
