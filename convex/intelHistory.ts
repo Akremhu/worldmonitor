@@ -156,6 +156,7 @@ function projectRecord(doc: Doc<"intelHistory">) {
     ingestedAt: doc.ingestedAt,
     runId: doc.runId,
     dedupeKey: doc.dedupeKey,
+    metadata: doc.metadata,
   };
 }
 
@@ -315,6 +316,7 @@ export const append = internalMutation({
         occurredAt: rec.occurredAt,
         ingestedAt,
         dedupeKey: rec.dedupeKey,
+        metadata: rec.metadata,
         embedding: rec.embedding,
       });
       inserted += 1;
