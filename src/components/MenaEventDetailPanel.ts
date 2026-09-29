@@ -3,6 +3,7 @@ import { getMenaEntity, getMenaEvent, getMenaIntelligenceStore, subscribeMenaInt
 import { getMenaSourcePolicy } from '@/config/mena/source-registry';
 import type { MenaEvent, MenaEventSource } from '@/config/mena/events';
 import { getSelectedMenaEventId, subscribeMenaEventSelection } from '@/services/mena-event-selection';
+import { getMenaEventHistory } from '@/services/mena-event-history';
 
 const EMPTY = '—';
 
@@ -181,10 +182,27 @@ export class MenaEventDetailPanel extends Panel {
     addField(relations, 'Related stories', event.relatedStoryIds.length ? event.relatedStoryIds.join(', ') : EMPTY);
     addField(relations, 'Tags', event.tags.length ? event.tags.join(', ') : EMPTY);
 
+    const history = document.createElement('section');
+    history.className = 'mena-detail-section';
+    const historyTitle = document.createElement('h4');
+    const versions = getMenaEventHistory(event.id);
+    historyTitle.textContent = `Evidence history (${versions.length} version${versions.length === 1 ? '' : 's'})`;
+    history.appendChild(historyTitle);
+    for (const version of versions.slice().reverse().slice(0, 8)) {
+      const row = document.createElement('article');
+      row.className = 'mena-detail-history-row';
+      const meta = document.createElement('div');
+      meta.textContent = `v${version.version} · ${formatDate(version.recordedAt)} · ${version.changedFields.join(', ')}`;
+      const sources = document.createElement('div');
+      sources.textContent = `Sources: ${version.sourceIds.join(', ') || EMPTY}`;
+      row.append(meta, sources);
+      history.appendChild(row);
+    }
+
     const note = document.createElement('div');
     note.className = 'mena-detail-provenance-note';
     note.textContent = 'OSINT provenance is preserved as reported evidence. Entity mention does not by itself establish responsibility, attribution, or intent.';
 
-    this.body.append(title, summary, grid, sources, entities, relations, note);
+    this.body.append(title, summary, grid, sources, entities, relations, history, note);
   }
 }
