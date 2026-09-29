@@ -64,7 +64,6 @@ export function ingestMenaNewsItems(items: readonly NewsItem[]): MenaEvent[] {
       sourceId,
       sourceName: item.source,
       sourceTier: policy?.tier,
-      language: item.language,
       location: location
         ? { ...location, precision: 'country' }
         : undefined,
