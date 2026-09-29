@@ -37,7 +37,7 @@ export function menaEventToHistoryRecord(event) {
   const sources = Array.isArray(event.sources)
     ? event.sources.slice(0, 32).map((source) => ({
         sourceId: safeString(source?.sourceId),
-        name: safeString(source?.name),
+        sourceName: safeString(source?.sourceName),
         publishedAt: finiteOrUndefined(source?.publishedAt),
         fetchedAt: finiteOrUndefined(source?.fetchedAt),
         sourceTier: Number.isFinite(source?.sourceTier) ? source.sourceTier : undefined,
