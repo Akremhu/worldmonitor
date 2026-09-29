@@ -55,6 +55,7 @@ const DEDUPE_KEY_MAX_CHARS = 256;
 const TITLE_MAX_CHARS = 500;
 const SUMMARY_MAX_CHARS = 2000;
 const SOURCE_URL_MAX_CHARS = 2048;
+const METADATA_MAX_BYTES = 12_000;
 
 // Embedding input budget. Long summaries add noise, not signal, to a
 // 512-dim vector — and the cache key is the text itself, so an
@@ -151,7 +152,8 @@ function trimmedString(value, maxChars) {
  *
  * @param {unknown} records
  * @returns {Array<{dedupeKey: string, title: string, occurredAt: number,
- *   country?: string, category?: string, summary?: string, sourceUrl?: string}>}
+ *   country?: string, category?: string, summary?: string, sourceUrl?: string,
+ *   metadata?: object}>}
  */
 export function normalizeHistoryRecords(records) {
   if (!Array.isArray(records)) return [];
@@ -180,6 +182,16 @@ export function normalizeHistoryRecords(records) {
     if (category) record.category = category;
     const sourceUrl = safeSourceUrl(trimmedString(raw.sourceUrl, SOURCE_URL_MAX_CHARS));
     if (sourceUrl) record.sourceUrl = sourceUrl;
+    if (raw.metadata !== undefined && raw.metadata !== null) {
+      if (typeof raw.metadata !== 'object' || Array.isArray(raw.metadata)) continue;
+      try {
+        const metadataJson = JSON.stringify(raw.metadata);
+        if (metadataJson.length > METADATA_MAX_BYTES) continue;
+        record.metadata = raw.metadata;
+      } catch {
+        continue;
+      }
+    }
 
     sanitized.push(record);
   }
