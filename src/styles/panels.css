@@ -3947,3 +3947,16 @@ a.hub-top-story {
 .mena-source-stale,.mena-source-dead{color:#f85149;background:rgba(248,81,73,.12)}
 .mena-situation-empty{padding:10px 0;color:var(--text-dim,#7d8590);font-size:10px}
 @media(max-width:700px){.mena-situation-stats{grid-template-columns:repeat(2,1fr)}.mena-situation-grid{grid-template-columns:1fr}.mena-situation-section:first-child{border-right:0;border-bottom:1px solid var(--border-subtle,rgba(255,255,255,.08))}}
+
+
+/* MENA Country Monitor */
+.mena-country-body{display:flex;flex-direction:column}
+.mena-country-header,.mena-country-row{display:grid;grid-template-columns:minmax(150px,1.7fr) 55px 55px 70px 75px;align-items:center;gap:8px}
+.mena-country-header{padding:7px 10px;border-bottom:1px solid var(--border-subtle,rgba(255,255,255,.08));color:var(--text-dim,#8b93a1);font-size:9px;text-transform:uppercase;letter-spacing:.04em}
+.mena-country-row{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.045);font-size:10px;color:var(--text-dim,#9aa3b2);font-variant-numeric:tabular-nums}
+.mena-country-row:last-child{border-bottom:0}
+.mena-country-row strong{font-size:11px;color:var(--text,#e6edf3);font-weight:600}
+.mena-country-row span{text-align:right}
+.mena-country-footer{padding:7px 10px;border-top:1px solid var(--border-subtle,rgba(255,255,255,.08));color:var(--text-dim,#697386);font-size:9px}
+.mena-country-empty{padding:24px 10px;text-align:center;color:var(--text-dim,#7d8590);font-size:10px}
+@media(max-width:700px){.mena-country-header,.mena-country-row{grid-template-columns:minmax(110px,1.5fr) 40px 40px 55px 55px;gap:5px;font-size:9px}.mena-country-row strong{font-size:10px}}
