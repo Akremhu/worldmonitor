@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: actions/checkout@d23441a48e516c6b34aea4fa41551a30e30af803
+      - uses: actions/setup-node@49933ea528caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24'
           cache: npm
@@ -28,4 +28,6 @@ jobs:
           CONVEX_SITE_URL: ${{ secrets.CONVEX_SITE_URL }}
           CONVEX_URL: ${{ secrets.CONVEX_URL }}
           CONVEX_SERVER_SHARED_SECRET: ${{ secrets.CONVEX_SERVER_SHARED_SECRET }}
+          RELAY_SHARED_SECRET: ${{ secrets.RELAY_SHARED_SECRET }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: node scripts/seed-mena-news.mjs
