@@ -891,6 +891,7 @@ export default defineConfig(({ mode }) => {
   const isDesktopBuild = process.env.VITE_DESKTOP_RUNTIME === '1';
   const activeVariant = process.env.VITE_VARIANT || 'full';
   const activeMeta = VARIANT_META[activeVariant] || VARIANT_META.full;
+  const isGitHubPagesBuild = process.env.GITHUB_PAGES === '1';
   const emitPublicSourceMaps = process.env.WM_EMIT_SOURCEMAPS === '1'
     || process.env.VERCEL_ENV === 'preview';
   // Sentry source-map upload. Gated on the token so a build without it (local,
@@ -901,6 +902,9 @@ export default defineConfig(({ mode }) => {
   const publishSentryRelease = process.env.VERCEL_ENV === 'production' && Boolean(sentryBuild.dist);
 
   return {
+    // GitHub Pages serves project sites under /worldmonitor/. Keep normal
+    // deployments at the root and opt into the project base only in CI.
+    base: isGitHubPagesBuild ? '/worldmonitor/' : '/',
     html: {
       cspNonce: STATIC_SCRIPT_NONCE,
     },
