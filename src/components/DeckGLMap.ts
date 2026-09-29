@@ -138,7 +138,7 @@ import { renderMilitaryVesselTooltipHtml } from './deckgl-tooltip-renderers';
 import type { GetChokepointStatusResponse } from '@/services/supply-chain';
 import type { MenaEvent } from '@/config/mena/events';
 import type { MenaEntity } from '@/config/mena/entities';
-import { getMenaIntelligenceStore } from '@/services/mena-intelligence-store';
+import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 import { selectMenaEvent, getSelectedMenaEventId } from '@/services/mena-event-selection';
 import type { ChinaCorridorControlTower } from '../../shared/china-corridor-control-towers';
 import {
@@ -668,6 +668,7 @@ export class DeckGLMap {
   private bypassArcData: BypassArcDatum[] = [];
   private scenarioState: ScenarioVisualState | null = null;
   private selectedChinaCorridorOverlay: ChinaCorridorOverlayProjection | null = null;
+  private menaStoreUnsubscribe: (() => void) | null = null;
   private affectedIso2Set: Set<string> = new Set();
   private positiveEvents: PositiveGeoEvent[] = [];
   private kindnessPoints: KindnessPoint[] = [];
@@ -922,6 +923,12 @@ export class DeckGLMap {
 
     this.setupDOM();
     this.popup = new MapPopup(container);
+
+    if (SITE_VARIANT === 'mena') {
+      this.menaStoreUnsubscribe = subscribeMenaIntelligenceStore(() => {
+        this.rafUpdateLayers();
+      });
+    }
 
     this.handleThemeChange = () => {
       if (isHappyVariant) {
@@ -8448,6 +8455,8 @@ export class DeckGLMap {
     this._unsubscribeAuthState = null;
     this._unsubscribeEntitlement?.();
     this._unsubscribeEntitlement = null;
+    this.menaStoreUnsubscribe?.();
+    this.menaStoreUnsubscribe = null;
     window.removeEventListener('theme-changed', this.handleThemeChange);
     window.removeEventListener('map-theme-changed', this.handleMapThemeChange);
     this.tradeReducedMotionMedia?.removeEventListener('change', this.handleTradeMotionPreferenceChange);
