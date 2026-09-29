@@ -1609,6 +1609,28 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
     variants: ['full', 'energy'],
   },
 
+  // MENA regional variant
+  menaSituation: {
+    labelKey: 'header.panelCatIntelligence',
+    panelKeys: ['cii', 'strategic-risk', 'threat-timeline', 'intel', 'gdelt-intel', 'telegram-intel', 'x-intel', 'cross-source-signals', 'security-advisories'],
+    variants: ['mena'],
+  },
+  menaSecurity: {
+    labelKey: 'header.panelCatCorrelation',
+    panelKeys: ['military-correlation', 'escalation-correlation', 'ucdp-events', 'displacement', 'airline-intel'],
+    variants: ['mena'],
+  },
+  menaRegional: {
+    labelKey: 'header.panelCatRegionalNews',
+    panelKeys: ['middleeast', 'yemen', 'gulf', 'iran', 'israelPalestine', 'redSea', 'levant', 'iraq'],
+    variants: ['mena'],
+  },
+  menaEconomy: {
+    labelKey: 'header.panelCatMarketsFinance',
+    panelKeys: ['economic', 'gulf-economies', 'commodities', 'energy-risk-overview', 'energy-complex', 'oil-inventories', 'supply-chain', 'hormuz-tracker', 'sanctions-pressure'],
+    variants: ['mena'],
+  },
+
   // Tech variant
   techAi: {
     labelKey: 'header.panelCatTechAi',
