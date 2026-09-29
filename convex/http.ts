@@ -1902,6 +1902,7 @@ const INTEL_HISTORY_MAX_DEDUPE_KEY_LEN = 256;
 const INTEL_HISTORY_MAX_COUNTRY_LEN = 8;
 const INTEL_HISTORY_MAX_CATEGORY_LEN = 64;
 const INTEL_HISTORY_MAX_IDENTIFIER_LEN = 128;
+const INTEL_HISTORY_MAX_METADATA_BYTES = 12_000;
 
 /** JSON response helper for the intel-history routes below. */
 function intelJson(body: unknown, status: number): Response {
@@ -1947,6 +1948,7 @@ type IntelHistoryIngestRecord = {
   summary?: string;
   sourceUrl?: string;
   occurredAt: number;
+  metadata?: Record<string, unknown>;
   embedding: number[];
 };
 
@@ -2024,6 +2026,24 @@ function validateIntelHistoryRecord(
       reason: `embedding must be an array of ${INTEL_HISTORY_EMBED_DIMS} finite numbers`,
     };
   }
+  let metadata: Record<string, unknown> | undefined;
+  if (rec.metadata !== undefined && rec.metadata !== null) {
+    if (typeof rec.metadata !== "object" || Array.isArray(rec.metadata)) {
+      return { ok: false, reason: "metadata must be a JSON object" };
+    }
+    try {
+      const serialized = JSON.stringify(rec.metadata);
+      if (serialized.length > INTEL_HISTORY_MAX_METADATA_BYTES) {
+        return {
+          ok: false,
+          reason: `metadata exceeds ${INTEL_HISTORY_MAX_METADATA_BYTES} bytes`,
+        };
+      }
+      metadata = rec.metadata as Record<string, unknown>;
+    } catch {
+      return { ok: false, reason: "metadata must be JSON-serializable" };
+    }
+  }
 
   const country = readOptionalString(rec.country, INTEL_HISTORY_MAX_COUNTRY_LEN);
   if (!country.ok) return { ok: false, reason: "country must be a short ISO2-ish string" };
@@ -2069,6 +2089,7 @@ function validateIntelHistoryRecord(
       category: category.value,
       summary: summary.value,
       sourceUrl: sourceUrl.value,
+      metadata,
     },
   };
 }
