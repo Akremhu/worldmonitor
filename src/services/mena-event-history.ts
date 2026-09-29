@@ -120,13 +120,15 @@ export function clearMenaEventHistory(): void {
  * The browser never receives Convex credentials or calls internal mutations.
  */
 export async function queryDurableMenaEventHistory(
-  query: Pick<MenaEventHistoryQuery, 'eventId' | 'countryCode' | 'since' | 'until' | 'limit'> = {},
+  query: Pick<MenaEventHistoryQuery, 'eventId' | 'eventType' | 'entityId' | 'countryCode' | 'since' | 'until' | 'limit'> = {},
 ): Promise<MenaEvent[]> {
   const response = await fetch('/api/mena-history', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       eventId: query.eventId,
+      eventType: query.eventType,
+      entityId: query.entityId,
       country: query.countryCode,
       from: query.since,
       to: query.until,
