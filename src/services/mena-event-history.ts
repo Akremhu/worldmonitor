@@ -11,6 +11,10 @@ export interface MenaEventVersion {
 
 export interface MenaEventHistoryQuery {
   eventId?: string;
+  countryCode?: string;
+  entityId?: string;
+  eventType?: MenaEvent['eventType'];
+  sourceId?: string;
   since?: number;
   until?: number;
   limit?: number;
@@ -81,6 +85,14 @@ export function queryMenaEventHistory(query: MenaEventHistoryQuery = {}): MenaEv
   return rows
     .filter(row => {
       if (query.eventId && row.eventId !== query.eventId) return false;
+      if (query.countryCode && row.event.location?.countryCode !== query.countryCode) return false;
+      if (
+        query.entityId &&
+        !row.event.entityIds.includes(query.entityId) &&
+        !row.event.actorIds.includes(query.entityId)
+      ) return false;
+      if (query.eventType && row.event.eventType !== query.eventType) return false;
+      if (query.sourceId && !row.event.sourceIds.includes(query.sourceId)) return false;
       if (query.since !== undefined && row.recordedAt < query.since) return false;
       if (query.until !== undefined && row.recordedAt > query.until) return false;
       return true;
