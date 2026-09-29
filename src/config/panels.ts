@@ -1149,7 +1149,7 @@ const ENERGY_MOBILE_MAP_LAYERS: MapLayers = {
 // UNIFIED PANEL REGISTRY
 // ============================================
 
-type PanelVariant = 'full' | 'tech' | 'finance' | 'commodity' | 'energy' | 'happy';
+type PanelVariant = 'full' | 'mena' | 'tech' | 'finance' | 'commodity' | 'energy' | 'happy';
 
 const MENA_PANELS: Record<string, PanelConfig> = {
   map: { name: 'MENA Intelligence Map', enabled: true, priority: 1 },
@@ -1217,7 +1217,7 @@ const MENA_MOBILE_MAP_LAYERS: MapLayers = {
   storageFacilities: false, fuelShortages: false, liveTankers: false,
 };
 
-const VARIANT_PANEL_CONFIGS: Record<PanelVariant | 'mena', Record<string, PanelConfig>> = {
+const VARIANT_PANEL_CONFIGS: Record<PanelVariant, Record<string, PanelConfig>> = {
   full: FULL_PANELS,
   mena: MENA_PANELS,
   tech: TECH_PANELS,
