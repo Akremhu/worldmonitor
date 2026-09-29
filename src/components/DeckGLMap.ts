@@ -136,6 +136,10 @@ import { trackGateHit } from '@/services/analytics';
 import { MapPopup, type PopupType } from './MapPopup';
 import { renderMilitaryVesselTooltipHtml } from './deckgl-tooltip-renderers';
 import type { GetChokepointStatusResponse } from '@/services/supply-chain';
+import type { MenaEvent } from '@/config/mena/events';
+import type { MenaEntity } from '@/config/mena/entities';
+import { getMenaIntelligenceStore } from '@/services/mena-intelligence-store';
+import { selectMenaEvent, getSelectedMenaEventId } from '@/services/mena-event-selection';
 import type { ChinaCorridorControlTower } from '../../shared/china-corridor-control-towers';
 import {
   projectChinaCorridorOverlay,
@@ -1971,6 +1975,17 @@ export class DeckGLMap {
       layers.push(...this.createChinaCorridorSelectionLayers(this.selectedChinaCorridorOverlay));
     }
 
+    // Canonical MENA intelligence layers sit above the basemap and below
+    // operational infrastructure so event evidence remains visually primary.
+    if (SITE_VARIANT === 'mena' && mapLayers.menaEvents) {
+      const menaEventsLayer = this.createMenaEventLayer();
+      if (menaEventsLayer) layers.push(menaEventsLayer);
+    }
+    if (SITE_VARIANT === 'mena' && mapLayers.menaEntities) {
+      const menaEntitiesLayer = this.createMenaEntityLayer();
+      if (menaEntitiesLayer) layers.push(menaEntitiesLayer);
+    }
+
     // Undersea cables layer
     if (mapLayers.cables) {
       layers.push(this.createCablesLayer());
@@ -2409,7 +2424,82 @@ export class DeckGLMap {
     return result;
   }
 
-  // Layer creation methods
+  // MENA canonical intelligence overlays. These read the shared canonical store,
+  // so the map and the intelligence panels operate on the same event/entity objects.
+  private createMenaEventLayer(): ScatterplotLayer<MenaEvent> | null {
+    if (SITE_VARIANT !== 'mena') return null;
+    const selectedId = getSelectedMenaEventId();
+    const events = getMenaIntelligenceStore().events.filter((event) => {
+      const lat = event.location?.latitude ?? event.geometry?.coordinates?.[1];
+      const lon = event.location?.longitude ?? event.geometry?.coordinates?.[0];
+      return Number.isFinite(lat) && Number.isFinite(lon);
+    });
+    if (events.length === 0) return null;
+
+    const confidenceColor = (confidence: MenaEvent['confidence']): [number, number, number, number] => {
+      switch (confidence) {
+        case 'high': return [80, 210, 140, 220];
+        case 'medium': return [80, 170, 235, 210];
+        case 'low': return [245, 190, 70, 200];
+        default: return [155, 155, 165, 185];
+      }
+    };
+
+    return new ScatterplotLayer<MenaEvent>({
+      id: 'mena-events-layer',
+      data: events,
+      getPosition: (event) => [
+        event.location?.longitude ?? event.geometry!.coordinates[0],
+        event.location?.latitude ?? event.geometry!.coordinates[1],
+      ],
+      getRadius: (event) => selectedId === event.id ? 18000 : 9000,
+      radiusMinPixels: 4,
+      radiusMaxPixels: 18,
+      getFillColor: (event) => selectedId === event.id
+        ? [255, 255, 255, 240]
+        : confidenceColor(event.confidence),
+      stroked: true,
+      getLineColor: (event) => selectedId === event.id ? [60, 210, 255, 255] : [20, 30, 40, 180],
+      lineWidthMinPixels: 1,
+      pickable: true,
+      updateTriggers: {
+        getRadius: [selectedId],
+        getFillColor: [selectedId],
+      },
+    });
+  }
+
+  private createMenaEntityLayer(): ScatterplotLayer<MenaEntity> | null {
+    if (SITE_VARIANT !== 'mena') return null;
+    const entities = getMenaIntelligenceStore().entities.filter((entity) => {
+      const lat = Number(entity.metadata?.lat ?? entity.metadata?.latitude);
+      const lon = Number(entity.metadata?.lon ?? entity.metadata?.longitude);
+      return Number.isFinite(lat) && Number.isFinite(lon);
+    });
+    if (entities.length === 0) return null;
+
+    return new ScatterplotLayer<MenaEntity>({
+      id: 'mena-entities-layer',
+      data: entities,
+      getPosition: (entity) => [
+        Number(entity.metadata?.lon ?? entity.metadata?.longitude),
+        Number(entity.metadata?.lat ?? entity.metadata?.latitude),
+      ],
+      getRadius: 5000,
+      radiusMinPixels: 3,
+      radiusMaxPixels: 9,
+      getFillColor: (entity) => entity.type === 'infrastructure' || entity.type === 'energy_asset'
+        ? [180, 110, 255, 190]
+        : entity.type === 'vessel' || entity.type === 'aircraft'
+          ? [70, 205, 225, 190]
+          : [230, 230, 230, 165],
+      stroked: true,
+      getLineColor: [25, 35, 45, 180],
+      lineWidthMinPixels: 1,
+      pickable: true,
+    });
+  }
+
   private createCablesLayer(): PathLayer {
     const highlightedCables = this.highlightedAssets.cable;
     const cacheKey = 'cables-layer';
@@ -4948,6 +5038,10 @@ export class DeckGLMap {
     };
 
     switch (layerId) {
+      case 'mena-events-layer':
+        return {
+          html: \`<div class="deckgl-tooltip"><strong>\${text(obj.title)}</strong><br/>\${text(obj.eventType)} · \${text(obj.location?.countryName || obj.location?.countryCode || '')}<br/>\${text(obj.confidence)} · \${numericLabel(obj.sources?.length)} sources</div>\`,
+        };
       case 'hotspots-layer':
         return { html: `<div class="deckgl-tooltip"><strong>${text(obj.name)}</strong><br/>${text(obj.subtext)}</div>` };
       case 'earthquakes-layer':
@@ -5470,6 +5564,13 @@ export class DeckGLMap {
       const waypoints = ROUTE_WAYPOINTS_MAP.get(segment.routeId) ?? [];
       this.popup.showRouteBreakdown(segment, waypoints, info.x, info.y);
       this.onTradeArcClick?.(segment, waypoints, info.x, info.y);
+      return;
+    }
+
+    if (layerId === 'mena-events-layer') {
+      const event = info.object as MenaEvent;
+      selectMenaEvent(event.id);
+      this.render();
       return;
     }
 
