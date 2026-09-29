@@ -132,6 +132,7 @@ import { fetchTelegramFeed, getTelegramIntelGeneration } from '@/services/telegr
 import { fetchXFeed, isUsableHydratedXFeed } from '@/services/x-intel';
 import { fetchOrefAlerts, startOrefPolling, stopOrefPolling, onOrefAlertsUpdate, type OrefAlertsResponse } from '@/services/oref-alerts';
 import { getResilienceRanking } from '@/services/resilience';
+import { ingestMenaNewsItems, setMenaEvents } from '@/services/mena-event-pipeline';
 import { buildResilienceChoroplethMap } from '@/components/resilience-choropleth-utils';
 import { enrichEventsWithExposure } from '@/services/population-exposure';
 import { debounce, getCircuitBreakerCooldownInfo, loadFromStorage, saveToStorage } from '@/utils';
@@ -2235,6 +2236,13 @@ export class DataLoaderManager implements AppModule {
     }
 
     this.ctx.allNews = collectedNews;
+    if (SITE_VARIANT === 'mena') {
+      const menaEvents = ingestMenaNewsItems(collectedNews);
+      setMenaEvents(menaEvents);
+      if (import.meta.env.DEV) {
+        console.info(`[MENA] normalized ${menaEvents.length} events from ${collectedNews.length} news items`);
+      }
+    }
     const committedServedStale = [...categoryServedStale.values()].some(Boolean) || intelServedStale;
     this.commitNewsFreshness(generation, committedServedStale);
     // Record what this run covered — but only when it actually landed something for
