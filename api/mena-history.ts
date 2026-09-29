@@ -77,6 +77,12 @@ export default async function handler(request) {
   const eventId = typeof body?.eventId === 'string' && body.eventId.trim()
     ? body.eventId.trim()
     : undefined;
+  const eventType = typeof body?.eventType === 'string' && body.eventType.trim()
+    ? body.eventType.trim()
+    : undefined;
+  const entityId = typeof body?.entityId === 'string' && body.entityId.trim()
+    ? body.entityId.trim()
+    : undefined;
   const from = finiteNumber(body?.from);
   const to = finiteNumber(body?.to);
   const requestedLimit = finiteNumber(body?.limit);
@@ -92,6 +98,8 @@ export default async function handler(request) {
       domain: 'mena',
       country,
       eventId,
+      eventType,
+      entityId,
       from,
       to,
       limit,
