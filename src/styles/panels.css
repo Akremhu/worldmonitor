@@ -4105,3 +4105,10 @@ a.hub-top-story {
 @media (max-width:800px) {
   .mena-ops-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
+
+/* MENA cross-domain correlation */
+.mena-cross-domain-body { display:grid; gap:8px; }
+.mena-cross-domain-row { padding:10px 12px; border:1px solid var(--border-color); border-radius:8px; background:var(--panel-bg); }
+.mena-cross-domain-event { display:block; width:100%; text-align:start; border:0; background:none; color:var(--text-primary); font-weight:600; cursor:pointer; padding:0; }
+.mena-cross-domain-domains { margin-top:6px; font-size:11px; color:var(--accent-color); }
+.mena-cross-domain-meta { margin-top:5px; font-size:10px; color:var(--text-secondary); line-height:1.45; }
