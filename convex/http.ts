@@ -2101,6 +2101,7 @@ function readIntelQueryScope(body: Record<string, unknown>):
       scope: {
         domain?: string;
         country?: string;
+        eventId?: string;
         from?: number;
         to?: number;
         limit?: number;
@@ -2111,6 +2112,8 @@ function readIntelQueryScope(body: Record<string, unknown>):
   if (!domain.ok) return { ok: false, error: "INVALID_DOMAIN" };
   const country = readOptionalString(body.country, INTEL_HISTORY_MAX_COUNTRY_LEN);
   if (!country.ok) return { ok: false, error: "INVALID_COUNTRY" };
+  const eventId = readOptionalString(body.eventId, INTEL_HISTORY_MAX_IDENTIFIER_LEN);
+  if (!eventId.ok) return { ok: false, error: "INVALID_EVENT_ID" };
   const from = readOptionalNumber(body.from);
   if (!from.ok) return { ok: false, error: "INVALID_FROM" };
   const to = readOptionalNumber(body.to);
@@ -2265,13 +2268,14 @@ http.route({
     if (!body) return intelJson({ error: "INVALID_JSON" }, 400);
     const parsed = readIntelQueryScope(body);
     if (!parsed.ok) return intelJson({ error: parsed.error }, 400);
-    if (!parsed.scope.domain && !parsed.scope.country) {
+    if (!parsed.scope.domain && !parsed.scope.country && !parsed.scope.eventId) {
       return intelJson({ error: "MISSING_SCOPE" }, 400);
     }
     try {
       const result = await ctx.runQuery(internal.intelHistory.timeline, {
         domain: parsed.scope.domain,
         country: parsed.scope.country,
+        eventId: parsed.scope.eventId,
         from: parsed.scope.from,
         to: parsed.scope.to,
         limit: parsed.scope.limit,
