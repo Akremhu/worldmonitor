@@ -295,6 +295,7 @@ export const DEFERRED_PANEL_NATURAL_FOOTPRINTS: Readonly<Record<string, Deferred
   'x-intel': { rowSpan: 2 },
   'threat-timeline': { rowSpan: 2 },
   'mena-situation-overview': { rowSpan: 2, className: 'panel-wide' },
+  'mena-country-monitor': { rowSpan: 2, className: 'panel-wide' },
   'mena-event-intelligence': { rowSpan: 2, className: 'panel-wide' },
   'mena-entity-monitor': { rowSpan: 2, className: 'panel-wide' },
   'trade-policy': { rowSpan: 2 },
@@ -3183,6 +3184,7 @@ export class PanelLayoutManager implements AppModule {
     if (isPanelInVariantDefaults('threat-timeline')) {
       this.lazyDefaultPanel('threat-timeline', () => import('@/components/ThreatTimelinePanel'), 'ThreatTimelinePanel');
     this.lazyDefaultPanel('mena-situation-overview', () => import('@/components/MenaSituationOverviewPanel'), 'MenaSituationOverviewPanel');
+    this.lazyDefaultPanel('mena-country-monitor', () => import('@/components/MenaCountryMonitorPanel'), 'MenaCountryMonitorPanel');
     this.lazyDefaultPanel('mena-event-intelligence', () => import('@/components/MenaEventTimelinePanel'), 'MenaEventTimelinePanel');
     this.lazyDefaultPanel('mena-entity-monitor', () => import('@/components/MenaEntityMonitorPanel'), 'MenaEntityMonitorPanel');
     }
