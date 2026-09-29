@@ -59,8 +59,9 @@ export class MenaEventMapPanel extends Panel {
     const height = 420;
 
     const points: string[] = [];
+    const mappedEvents = events.filter((event) => event.location?.countryCode || event.location?.latitude != null);
     const counts = new Map<string, number>();
-    for (const event of events) {
+    for (const event of mappedEvents) {
       const code = event.location?.countryCode;
       if (code) counts.set(code, (counts.get(code) ?? 0) + 1);
       const country = COUNTRIES.find((row) => row[0] === code);
@@ -80,9 +81,9 @@ export class MenaEventMapPanel extends Panel {
       return `<g><circle cx="${x}" cy="${y}" r="2" class="mena-map-country"></circle><text x="${x + 6}" y="${y + 3}" class="mena-map-label">${esc(code)} · ${count}</text></g>`;
     }).join('');
 
-    this.setCount(events.length);
+    this.setCount(mappedEvents.length);
     this.body.innerHTML = `
-      <div class="mena-map-meta"><span>7-day event activity</span><span>${events.length} mapped observations</span><span>Dots fade with age</span></div>
+      <div class="mena-map-meta"><span>7-day event activity</span><span>${mappedEvents.length} mapped observations</span><span>Dots fade with age</span></div>
       <div class="mena-map-canvas">
         <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Schematic MENA event map">
           <rect x="0" y="0" width="${width}" height="${height}" class="mena-map-surface"></rect>
