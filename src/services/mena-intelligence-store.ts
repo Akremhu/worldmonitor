@@ -9,6 +9,9 @@ export interface MenaIntelligenceStore {
   updatedAt: number;
 }
 
+type StoreListener = (store: MenaIntelligenceStore) => void;
+const listeners = new Set<StoreListener>();
+
 let store: MenaIntelligenceStore = {
   events: [],
   entities: [],
@@ -25,6 +28,12 @@ export function updateMenaIntelligenceStore(events: readonly MenaEvent[], entiti
     graph: buildMenaIntelligenceGraph(nextEvents, nextEntities),
     updatedAt: Date.now(),
   };
+  for (const listener of listeners) listener(store);
+}
+
+export function subscribeMenaIntelligenceStore(listener: StoreListener): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
 }
 
 export function getMenaIntelligenceStore(): MenaIntelligenceStore {
