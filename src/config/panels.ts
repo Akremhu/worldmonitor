@@ -1157,6 +1157,7 @@ const MENA_PANELS: Record<string, PanelConfig> = {
   insights: { name: 'AI Regional Insights', enabled: true, priority: 1 },
   'threat-timeline': { name: 'Regional Event Timeline', enabled: true, priority: 1 },
   'mena-situation-overview': { name: 'MENA Situation Overview', enabled: true, priority: 1 },
+  'mena-country-monitor': { name: 'MENA Country Monitor', enabled: true, priority: 1 },
   'mena-event-intelligence': { name: 'MENA Event Intelligence', enabled: true, priority: 1 },
   'mena-entity-monitor': { name: 'MENA Entity Monitor', enabled: true, priority: 1 },
   'strategic-posture': { name: 'Regional Strategic Posture', enabled: true, priority: 1 },
