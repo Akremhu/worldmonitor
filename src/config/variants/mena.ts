@@ -65,7 +65,7 @@ export const DEFAULT_MAP_LAYERS: MapLayers = {
   speciesRecovery: false, renewableInstallations: true, tradeRoutes: true, iranAttacks: false,
   ciiChoropleth: true, resilienceScore: true, dayNight: false, miningSites: false,
   processingPlants: false, commodityPorts: true, webcams: false, diseaseOutbreaks: true,
-  storageFacilities: true, fuelShortages: true, liveTankers: true,
+  storageFacilities: true, fuelShortages: true, liveTankers: true, menaEvents: true, menaEntities: true,
 };
 
 export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
