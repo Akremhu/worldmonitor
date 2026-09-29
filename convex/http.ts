@@ -2253,6 +2253,38 @@ function readIdentifierList(
 }
 
 http.route({
+  path: "/api/internal-intel-timeline",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    const secret = process.env.CONVEX_SERVER_SHARED_SECRET ?? "";
+    const provided = request.headers.get("x-convex-shared-secret") ?? "";
+    if (!secret || !(await timingSafeEqualStrings(provided, secret))) {
+      return intelJson({ error: "UNAUTHORIZED" }, 401);
+    }
+    const body = await parseJsonObjectBody<Record<string, unknown>>(request);
+    if (!body) return intelJson({ error: "INVALID_JSON" }, 400);
+    const parsed = readIntelQueryScope(body);
+    if (!parsed.ok) return intelJson({ error: parsed.error }, 400);
+    if (!parsed.scope.domain && !parsed.scope.country) {
+      return intelJson({ error: "MISSING_SCOPE" }, 400);
+    }
+    try {
+      const result = await ctx.runQuery(internal.intelHistory.timeline, {
+        domain: parsed.scope.domain,
+        country: parsed.scope.country,
+        from: parsed.scope.from,
+        to: parsed.scope.to,
+        limit: parsed.scope.limit,
+      });
+      return intelJson(result, 200);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "intel history timeline failed";
+      return intelJson({ error: msg }, 500);
+    }
+  }),
+});
+
+http.route({
   path: "/relay/intel-history/retract",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
