@@ -1,4 +1,4 @@
-import type { MenaEntity, MenaEntityType } from '@/config/mena/entities';
+import type { MenaEntity, MenaEntityType } from '@/config/mena/entities';\n\nfunction createStableMenaEntityId(value: string): string {\n  let hash = 2166136261;\n  for (const char of value.normalize('NFKC')) {\n    hash ^= char.codePointAt(0) ?? 0;\n    hash = Math.imul(hash, 16777619);\n  }\n  return 'me-entity-' + (hash >>> 0).toString(16);\n}\n
 
 export interface MenaEntityCandidate {
   canonicalName: string;
@@ -90,7 +90,7 @@ export function extractMenaEntityCandidates(text: string): MenaEntityCandidate[]
 export function upsertMenaEntity(existing: MenaEntity | undefined, candidate: MenaEntityCandidate, eventId: string, sourceId: string, now = Date.now()): MenaEntity {
   if (!existing) {
     return {
-      id: 'me-entity-' + candidate.canonicalName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      id: createStableMenaEntityId(candidate.canonicalName),
       canonicalName: candidate.canonicalName,
       type: candidate.type,
       countryCodes: [...candidate.countryCodes],
