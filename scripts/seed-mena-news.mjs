@@ -141,7 +141,7 @@ async function collect() {
       resource: 'events',
       runId: `mena-${Date.now()}`,
       records: unique.map(event => ({
-        dedupeKey: `mena:events:${event.id}`,
+        dedupeKey: `mena:events:${event.id}:${hash(`${event.timestamp}|${event.title}|${event.summary}|${event.sourceId}|${event.sourceUrl}`)}`,
         title: event.title,
         summary: event.summary,
         occurredAt: event.timestamp,
