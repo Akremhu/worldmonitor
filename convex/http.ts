@@ -2102,6 +2102,8 @@ function readIntelQueryScope(body: Record<string, unknown>):
         domain?: string;
         country?: string;
         eventId?: string;
+        eventType?: string;
+        entityId?: string;
         from?: number;
         to?: number;
         limit?: number;
@@ -2114,6 +2116,10 @@ function readIntelQueryScope(body: Record<string, unknown>):
   if (!country.ok) return { ok: false, error: "INVALID_COUNTRY" };
   const eventId = readOptionalString(body.eventId, INTEL_HISTORY_MAX_IDENTIFIER_LEN);
   if (!eventId.ok) return { ok: false, error: "INVALID_EVENT_ID" };
+  const eventType = readOptionalString(body.eventType, 64);
+  if (!eventType.ok) return { ok: false, error: "INVALID_EVENT_TYPE" };
+  const entityId = readOptionalString(body.entityId, INTEL_HISTORY_MAX_IDENTIFIER_LEN);
+  if (!entityId.ok) return { ok: false, error: "INVALID_ENTITY_ID" };
   const from = readOptionalNumber(body.from);
   if (!from.ok) return { ok: false, error: "INVALID_FROM" };
   const to = readOptionalNumber(body.to);
@@ -2127,6 +2133,8 @@ function readIntelQueryScope(body: Record<string, unknown>):
       domain: domain.value,
       country: country.value,
       eventId: eventId.value,
+      eventType: eventType.value,
+      entityId: entityId.value,
       from: from.value,
       to: to.value,
       limit: limit.value,
@@ -2269,7 +2277,7 @@ http.route({
     if (!body) return intelJson({ error: "INVALID_JSON" }, 400);
     const parsed = readIntelQueryScope(body);
     if (!parsed.ok) return intelJson({ error: parsed.error }, 400);
-    if (!parsed.scope.domain && !parsed.scope.country && !parsed.scope.eventId) {
+    if (!parsed.scope.domain && !parsed.scope.country && !parsed.scope.eventId && !parsed.scope.eventType && !parsed.scope.entityId) {
       return intelJson({ error: "MISSING_SCOPE" }, 400);
     }
     try {
@@ -2277,6 +2285,8 @@ http.route({
         domain: parsed.scope.domain,
         country: parsed.scope.country,
         eventId: parsed.scope.eventId,
+        eventType: parsed.scope.eventType,
+        entityId: parsed.scope.entityId,
         from: parsed.scope.from,
         to: parsed.scope.to,
         limit: parsed.scope.limit,
