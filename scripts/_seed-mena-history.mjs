@@ -41,6 +41,7 @@ export function menaEventToHistoryRecord(event) {
         publishedAt: finiteOrUndefined(source?.publishedAt),
         fetchedAt: finiteOrUndefined(source?.fetchedAt),
         sourceTier: Number.isFinite(source?.sourceTier) ? source.sourceTier : undefined,
+        url: safeString(source?.url),
       })).filter((source) => source.id || source.name)
     : [];
 
@@ -77,9 +78,7 @@ export function menaEventToHistoryRecord(event) {
 
   const country = safeString(event.location?.countryCode);
   const category = safeString(event.eventType);
-  const sourceUrl = sources.find((source) => source?.id && typeof event.sources?.find === 'function'
-    ? event.sources.find((candidate) => candidate?.id === source.id)?.url
-    : undefined);
+  const sourceUrl = sources.find((source) => source?.url)?.url;
 
   return {
     dedupeKey: `mena:events:${id}`,
