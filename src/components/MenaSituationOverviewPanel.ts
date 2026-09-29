@@ -36,7 +36,7 @@ export class MenaSituationOverviewPanel extends Panel {
     super({
       id: 'mena-situation-overview',
       title: 'MENA Situation Overview',
-      infoTooltip: 'Current regional event activity, event-type distribution and source freshness. This is descriptive OSINT aggregation, not a risk or political judgment.',
+      infoTooltip: 'Current regional event activity, event-type distribution and evidence freshness from the intelligence store. This is descriptive OSINT aggregation, not a risk or political judgment.',
       showCount: true,
       className: 'panel-wide',
       collapsible: true,
@@ -81,7 +81,8 @@ export class MenaSituationOverviewPanel extends Panel {
     const sourceRows = MENA_SOURCE_HEALTH_POLICIES.map((policy) => {
       const sourceEvents = events.filter((e) => e.sourceIds.includes(policy.id));
       const lastSeen = sourceEvents.reduce((max, event) => Math.max(max, event.lastUpdatedAt || event.timestamp), 0);
-      const state = getMenaFreshnessState(lastSeen, policy);
+      const ageMinutes = lastSeen ? Math.max(0, (Date.now() - lastSeen) / 60_000) : null;
+      const state = getMenaFreshnessState(ageMinutes, policy);
       return { policy, state, lastSeen, events: sourceEvents.length };
     }).sort((a, b) => {
       const rank = { LIVE: 0, FRESH: 1, AGING: 2, STALE: 3, DEAD: 4 } as const;
@@ -135,7 +136,7 @@ export class MenaSituationOverviewPanel extends Panel {
 
     const sourceSection = document.createElement('section');
     sourceSection.className = 'mena-situation-sources';
-    sourceSection.innerHTML = '<h4>Source freshness</h4>';
+    sourceSection.innerHTML = '<h4>Evidence freshness</h4>';
     for (const row of sourceRows.slice(0, 10)) {
       const item = document.createElement('div');
       item.className = 'mena-situation-source';
