@@ -129,11 +129,45 @@ async function collect() {
   const results = await Promise.allSettled(MENA_NEWS_FEEDS.map(fetchFeed));
   const events = results.flatMap(result => result.status === 'fulfilled' ? result.value : []);
   const seen = new Set();
-  return events.filter(event => {
+  const unique = events.filter(event => {
     if (seen.has(event.id)) return false;
     seen.add(event.id);
     return true;
   }).sort((a, b) => b.timestamp - a.timestamp).slice(0, 250);
+
+  try {
+    await appendSeedHistory({
+      domain: 'mena',
+      resource: 'events',
+      runId: `mena-${Date.now()}`,
+      records: unique.map(event => ({
+        dedupeKey: `mena:events:${event.id}`,
+        title: event.title,
+        summary: event.summary,
+        occurredAt: event.timestamp,
+        country: event.countryCode,
+        category: event.eventType,
+        sourceUrl: event.sourceUrl,
+        metadata: {
+          schemaVersion: 1,
+          eventId: event.id,
+          eventType: event.eventType,
+          location: { countryCode: event.countryCode },
+          sourceIds: [event.sourceId],
+          sources: [{
+            sourceId: event.sourceId,
+            sourceName: event.sourceName,
+            publishedAt: event.timestamp,
+            url: event.sourceUrl,
+          }],
+        },
+      })),
+    });
+  } catch (error) {
+    console.warn('[MENA history] append failed:', error?.message || error);
+  }
+
+  return { events: unique };
 }
 
 const CANONICAL_KEY = 'mena:news-intelligence:v1';
@@ -147,39 +181,6 @@ if (process.argv[1]?.endsWith('seed-mena-news.mjs')) {
     declareRecords: data => data?.events?.length || 0,
     schemaVersion: 1,
     maxStaleMin: 90,
-  }).then(async result => {
-    const events = result?.events || [];
-    try {
-      await appendSeedHistory({
-        domain: 'mena',
-        resource: 'events',
-        runId: `mena-${Date.now()}`,
-        records: events.map(event => ({
-          dedupeKey: `mena:events:${event.id}`,
-          title: event.title,
-          summary: event.summary,
-          occurredAt: event.timestamp,
-          country: event.countryCode,
-          category: event.eventType,
-          sourceUrl: event.sourceUrl,
-          metadata: {
-            schemaVersion: 1,
-            eventId: event.id,
-            eventType: event.eventType,
-            location: { countryCode: event.countryCode },
-            sourceIds: [event.sourceId],
-            sources: [{
-              sourceId: event.sourceId,
-              sourceName: event.sourceName,
-              publishedAt: event.timestamp,
-              url: event.sourceUrl,
-            }],
-          },
-        })),
-      });
-    } catch (error) {
-      console.warn('[MENA history] append failed:', error?.message || error);
-    }
   }).catch(error => {
     console.error('FATAL:', error?.message || error);
     process.exit(1);
