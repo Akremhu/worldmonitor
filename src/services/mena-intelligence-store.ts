@@ -1,6 +1,7 @@
 import type { MenaEntity } from '@/config/mena/entities';
 import type { MenaEvent } from '@/config/mena/events';
 import { buildMenaIntelligenceGraph, type MenaGraphSnapshot } from '@/services/mena-intelligence-graph';
+import { recordMenaEventVersions } from '@/services/mena-event-history';
 
 export interface MenaIntelligenceStore {
   events: MenaEvent[];
@@ -21,6 +22,7 @@ let store: MenaIntelligenceStore = {
 
 export function updateMenaIntelligenceStore(events: readonly MenaEvent[], entities: readonly MenaEntity[]): void {
   const nextEvents = [...events];
+  recordMenaEventVersions(nextEvents);
   const nextEntities = [...entities];
   store = {
     events: nextEvents,
