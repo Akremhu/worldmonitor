@@ -10,7 +10,7 @@ import { isDesktopRuntime } from '@/services/runtime';
  * imports this type so the picker, dispatcher, and shell stay in lockstep.
  */
 export type RendererKind = 'svg' | 'deck' | 'globe';
-export type MapVariant = 'full' | 'tech' | 'finance' | 'happy' | 'commodity' | 'energy';
+export type MapVariant = 'full' | 'tech' | 'finance' | 'happy' | 'commodity' | 'energy' | 'mena';
 
 const _desktop = isDesktopRuntime();
 
@@ -129,6 +129,8 @@ export const LAYER_REGISTRY: Record<keyof MapLayers, LayerDefinition> = {
   storageFacilities:        def('storageFacilities',        '&#127959;', 'storageFacilities',        'Storage Facilities', ['deck']),
   fuelShortages:            def('fuelShortages',            '&#9881;',   'fuelShortages',            'Fuel Shortages', ['deck']),
   liveTankers:              def('liveTankers',              '&#128674;', 'liveTankers',              'Live Tanker Positions', ['deck']),
+  menaEvents:               def('menaEvents',               '&#9679;',    'menaEvents',               'MENA Events', ['deck']),
+  menaEntities:             def('menaEntities',             '&#9670;',    'menaEntities',             'MENA Entities', ['deck']),
 };
 
 export const V1_LAYER_EXPLANATION_KEYS = [
@@ -387,6 +389,16 @@ const VARIANT_LAYER_ORDER: Record<MapVariant, Array<keyof MapLayers>> = {
     // Energy-adjacent context
     'sanctions', 'fires', 'climate', 'weather', 'canadaRoads', 'outages', 'natural', 'canadaAlerts',
     'resilienceScore', 'dayNight',
+  ],
+  mena: [
+    'menaEvents', 'menaEntities',
+    'military', 'ais', 'flights', 'bases', 'nuclear',
+    'cables', 'pipelines', 'waterways', 'tradeRoutes',
+    'storageFacilities', 'fuelShortages', 'liveTankers',
+    'commodityPorts', 'economic', 'financialCenters', 'centralBanks', 'commodityHubs',
+    'ucdpEvents', 'displacement', 'protests', 'natural', 'weather', 'climate',
+    'outages', 'cyberThreats', 'sanctions', 'renewableInstallations', 'minerals',
+    'diseaseOutbreaks', 'hotspots', 'conflicts', 'ciiChoropleth',
   ],
 };
 
