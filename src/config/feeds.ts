@@ -1196,7 +1196,6 @@ export const CANONICAL_FEEDS: Record<string, Feed[]> = mergeCanonicalFeeds([
   COMMODITY_FEEDS,
   ENERGY_FEEDS,
   HAPPY_FEEDS,
-  ENERGY_FEEDS,
   MENA_FEEDS,
   ON_DEMAND_FEEDS,
 ]);
