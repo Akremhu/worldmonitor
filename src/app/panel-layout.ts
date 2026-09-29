@@ -3188,6 +3188,7 @@ export class PanelLayoutManager implements AppModule {
       this.lazyDefaultPanel('threat-timeline', () => import('@/components/ThreatTimelinePanel'), 'ThreatTimelinePanel');
     this.lazyDefaultPanel('mena-situation-overview', () => import('@/components/MenaSituationOverviewPanel'), 'MenaSituationOverviewPanel');
     this.lazyDefaultPanel('mena-country-monitor', () => import('@/components/MenaCountryMonitorPanel'), 'MenaCountryMonitorPanel');
+    this.lazyDefaultPanel('mena-country-intelligence', () => import('@/components/MenaCountryIntelligencePanel'), 'MenaCountryIntelligencePanel');
     this.lazyDefaultPanel('mena-event-map', () => import('@/components/MenaEventMapPanel'), 'MenaEventMapPanel');
     this.lazyDefaultPanel('mena-event-intelligence', () => import('@/components/MenaEventTimelinePanel'), 'MenaEventTimelinePanel');
     this.lazyDefaultPanel('mena-event-detail', () => import('@/components/MenaEventDetailPanel'), 'MenaEventDetailPanel');
