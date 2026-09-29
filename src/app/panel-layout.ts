@@ -3190,6 +3190,7 @@ export class PanelLayoutManager implements AppModule {
     this.lazyDefaultPanel('mena-event-map', () => import('@/components/MenaEventMapPanel'), 'MenaEventMapPanel');
     this.lazyDefaultPanel('mena-event-intelligence', () => import('@/components/MenaEventTimelinePanel'), 'MenaEventTimelinePanel');
     this.lazyDefaultPanel('mena-event-detail', () => import('@/components/MenaEventDetailPanel'), 'MenaEventDetailPanel');
+    this.lazyDefaultPanel('mena-correlation', () => import('@/components/MenaCorrelationPanel'), 'MenaCorrelationPanel');
     this.lazyDefaultPanel('mena-entity-monitor', () => import('@/components/MenaEntityMonitorPanel'), 'MenaEntityMonitorPanel');
     }
 
