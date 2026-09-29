@@ -69,7 +69,8 @@ export class MenaCountryMonitorPanel extends Panel {
       const lastSeen = events
         .filter((event) => event.location?.countryCode === code)
         .reduce((max, event) => Math.max(max, event.lastUpdatedAt || event.timestamp), 0);
-      return { code, name, last24h, previous24h, last7d, entities: entities.size, lastSeen };
+      const previous24h = eventCount(events, code, now - 2 * 86_400_000) - last24h;
+      return { code, name, last24h, previous24h: Math.max(0, previous24h), last7d, entities: entities.size, lastSeen };
     });
 
     this.setCount(COUNTRIES.length);
