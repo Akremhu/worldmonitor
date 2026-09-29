@@ -3179,6 +3179,7 @@ export class PanelLayoutManager implements AppModule {
     this.lazyDefaultPanel('insights', () => import('@/components/InsightsPanel'), 'InsightsPanel');
     if (isPanelInVariantDefaults('threat-timeline')) {
       this.lazyDefaultPanel('threat-timeline', () => import('@/components/ThreatTimelinePanel'), 'ThreatTimelinePanel');
+    this.lazyDefaultPanel('mena-event-intelligence', () => import('@/components/MenaEventTimelinePanel'), 'MenaEventTimelinePanel');
     }
 
     // Global Giving panel (all variants)
