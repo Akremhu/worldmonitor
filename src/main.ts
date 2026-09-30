@@ -734,7 +734,9 @@ if (!('__TAURI_INTERNALS__' in window) && !('__TAURI__' in window) && swContaine
     } catch {}
   };
 
-  navigator.serviceWorker.register('/sw.js', { scope: '/' })
+  const serviceWorkerUrl = new URL('sw.js', document.baseURI).toString();
+  const serviceWorkerScope = new URL('./', document.baseURI).pathname;
+  navigator.serviceWorker.register(serviceWorkerUrl, { scope: serviceWorkerScope })
     .then((registration) => {
       console.log('[PWA] Service worker registered');
 
