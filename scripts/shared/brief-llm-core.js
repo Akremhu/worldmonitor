@@ -445,7 +445,7 @@ const ACRONYM_NORMALIZE = (() => {
 })();
 
 const AND_JOINED_ACRONYM_VARIANTS = ACRONYM_EXPANSIONS
-  .flatMap((group) => group)
+  .flat()
   .map((variant) => variant.toLowerCase().split(/\s+/))
   .filter((tokens) => tokens.includes('and'));
 
