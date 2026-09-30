@@ -1,6 +1,7 @@
 import { Panel } from './Panel';
 import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 import { selectMenaEvent } from '@/services/mena-event-selection';
+import { setTrustedHtml, trustedHtml } from '@/utils/dom-utils';
 
 const COUNTRIES = [
   ['EG', 'Egypt', 30.8, 30.8], ['IL', 'Israel', 31.5, 34.8], ['PS', 'Palestine', 31.9, 35.2],
@@ -83,7 +84,7 @@ export class MenaEventMapPanel extends Panel {
     }).join('');
 
     this.setCount(mappedEvents.length);
-    this.body.innerHTML = `
+    setTrustedHtml(this.body, trustedHtml(`
       <div class="mena-map-meta"><span>7-day event activity</span><span>${mappedEvents.length} mapped observations</span><span>Dots fade with age</span></div>
       <div class="mena-map-canvas">
         <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Schematic MENA event map">
@@ -93,7 +94,9 @@ export class MenaEventMapPanel extends Panel {
           <g class="mena-map-events">${points.join('')}</g>
         </svg>
       </div>
-      <div class="mena-map-note">Schematic regional projection. Precise coordinates are used when present; otherwise events are plotted at the country reference centroid. Select a point to inspect evidence.</div>`;
+      <div class="mena-map-note">Schematic regional projection. Precise coordinates are used when present; otherwise events are plotted at the country reference centroid. Select a point to inspect evidence.</div>`,
+      'MENA map markup is generated from escaped event identifiers and titles.'
+    ));
     this.body.querySelectorAll<SVGCircleElement>('[data-event-id]').forEach((point) => {
       point.addEventListener('click', () => selectMenaEvent(point.dataset.eventId ?? null));
       point.style.cursor = 'pointer';
