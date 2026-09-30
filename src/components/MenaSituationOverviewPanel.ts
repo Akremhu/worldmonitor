@@ -1,6 +1,7 @@
 import { Panel } from './Panel';
 import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 import { MENA_SOURCE_HEALTH_POLICIES, getMenaFreshnessState } from '@/config/mena/source-health';
+import { setTrustedHtml, trustedHtml } from '@/utils/dom-utils';
 
 const COUNTRIES = [
   ['YE', 'Yemen'], ['SA', 'Saudi Arabia'], ['AE', 'UAE'], ['OM', 'Oman'],
@@ -103,7 +104,8 @@ export class MenaSituationOverviewPanel extends Panel {
       const card = document.createElement('div');
       card.className = 'mena-situation-stat';
       card.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
-      stats.appendChild(card);
+      setTrustedHtml(card, trustedHtml(`<span>${label}</span><strong>${value}</strong>`, 'Statistic labels and values are controlled application data.'));
+    stats.appendChild(card);
     }
 
     const grid = document.createElement('div');
@@ -111,36 +113,48 @@ export class MenaSituationOverviewPanel extends Panel {
 
     const countrySection = document.createElement('section');
     countrySection.className = 'mena-situation-section';
-    countrySection.innerHTML = '<h4>Activity by country · 24h</h4>';
+    const countryHeading = document.createElement('h4');
+    countryHeading.textContent = 'Activity by country · 24h';
+    countrySection.appendChild(countryHeading);
     for (const row of countries.slice(0, 8)) {
       const item = document.createElement('div');
       item.className = 'mena-situation-bar-row';
-      item.innerHTML = `<span>${row.name}</span><i><b style="width:${last24h.length ? Math.min(100, row.count / Math.max(1, countries[0]?.count ?? 0) * 100) : 0}%"></b></i><em>${row.count}</em>`;
+      const barWidth = last24h.length ? Math.min(100, row.count / Math.max(1, countries[0]?.count ?? 0) * 100) : 0;
+      setTrustedHtml(item, trustedHtml(`<span>${row.name}</span><i><b></b></i><em>${row.count}</em>`, 'Country names are configured data; numeric values are computed.'));
+      const bar = item.querySelector('b');
+      if (bar) bar.style.width = `${barWidth}%`;
       countrySection.appendChild(item);
     }
 
     const typeSection = document.createElement('section');
     typeSection.className = 'mena-situation-section';
-    typeSection.innerHTML = '<h4>Event types · 24h</h4>';
+    const typeHeading = document.createElement('h4');
+    typeHeading.textContent = 'Event types · 24h';
+    typeSection.appendChild(typeHeading);
     for (const [type, count] of typeCounts) {
       const item = document.createElement('div');
       item.className = 'mena-situation-type';
-      item.innerHTML = `<span>${type.replace(/_/g, ' ')}</span><strong>${count}</strong>`;
+      setTrustedHtml(item, trustedHtml(`<span>${type.replace(/_/g, ' ')}</span><strong>${count}</strong>`, 'Event type is an application enum; count is computed.'));
       typeSection.appendChild(item);
     }
     if (!typeCounts.length) {
-      typeSection.insertAdjacentHTML('beforeend', '<div class="mena-situation-empty">Waiting for regional events…</div>');
+      const empty = document.createElement('div');
+      empty.className = 'mena-situation-empty';
+      empty.textContent = 'Waiting for regional events…';
+      typeSection.appendChild(empty);
     }
 
     grid.append(countrySection, typeSection);
 
     const sourceSection = document.createElement('section');
     sourceSection.className = 'mena-situation-sources';
-    sourceSection.innerHTML = '<h4>Evidence freshness</h4>';
+    const sourceHeading = document.createElement('h4');
+    sourceHeading.textContent = 'Evidence freshness';
+    sourceSection.appendChild(sourceHeading);
     for (const row of sourceRows.slice(0, 10)) {
       const item = document.createElement('div');
       item.className = 'mena-situation-source';
-      item.innerHTML = `<span>${row.policy.name}</span><b class="mena-source-${row.state.toLowerCase()}">${row.state}</b><em>${row.lastSeen ? age(row.lastSeen) + ' ago' : 'no events'}</em>`;
+      setTrustedHtml(item, trustedHtml(`<span>${row.policy.name}</span><b class="mena-source-${row.state.toLowerCase()}">${row.state}</b><em>${row.lastSeen ? age(row.lastSeen) + ' ago' : 'no events'}</em>`, 'Source policy names and freshness states are controlled application data.'));
       sourceSection.appendChild(item);
     }
 
