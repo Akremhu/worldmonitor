@@ -132,7 +132,8 @@ import { fetchTelegramFeed, getTelegramIntelGeneration } from '@/services/telegr
 import { fetchXFeed, isUsableHydratedXFeed } from '@/services/x-intel';
 import { fetchOrefAlerts, startOrefPolling, stopOrefPolling, onOrefAlertsUpdate, type OrefAlertsResponse } from '@/services/oref-alerts';
 import { getResilienceRanking } from '@/services/resilience';
-import { ingestMenaNewsItems, setMenaEvents } from '@/services/mena-event-pipeline';\nimport { enrichMenaEventsWithEntities } from '@/services/mena-event-enrichment';
+import { ingestMenaNewsItems, setMenaEvents } from '@/services/mena-event-pipeline';
+import { enrichMenaEventsWithEntities } from '@/services/mena-event-enrichment';
 import { updateMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 
 import { buildResilienceChoroplethMap } from '@/components/resilience-choropleth-utils';
