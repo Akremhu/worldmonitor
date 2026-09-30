@@ -986,6 +986,10 @@ export default defineConfig(({ mode }) => {
       sebufApiPlugin(),
       brotliPrecompressPlugin(),
       VitePWA({
+        // GitHub Pages is a static project-site deployment. The dashboard
+        // explicitly unregisters any stale worker there, so do not emit a new
+        // worker that can reintroduce stale-cache behavior.
+        disable: isGitHubPagesBuild,
         registerType: 'autoUpdate',
         injectRegister: false,
 
