@@ -164,6 +164,11 @@ const PANEL_CLUSTER: Record<string, PanelChunkName> = {
   Prediction: 'panels-intel', ProgressCharts: 'panels-intel',
   RegionalIntelligenceBoard: 'panels-intel',
   MenaSituationOverview: 'panels-intel',
+  MenaCorrelation: 'panels-intel', MenaCountryIntelligence: 'panels-intel',
+  MenaCountryMonitor: 'panels-intel', MenaCrossDomain: 'panels-intel',
+  MenaEntityMonitor: 'panels-intel', MenaEventDetail: 'panels-intel',
+  MenaEventMap: 'panels-intel', MenaEventTimeline: 'panels-intel',
+  MenaHistoricalIntelligence: 'panels-intel', MenaOperationalActivity: 'panels-intel',
   Regulation: 'panels-intel',
   // Disasters / climate / connectivity / society
   ClimateAnomaly: 'panels-risk', Counters: 'panels-risk',
