@@ -45,7 +45,7 @@ export function ingestMenaNewsItems(items: readonly NewsItem[]): MenaEvent[] {
 
   for (const item of items) {
     const policy = getMenaSourcePolicy(item.source);
-    const location = detectCountry([item.title, item.description ?? ''].join(' '));
+    const location = detectCountry([item.title, item.snippet ?? ''].join(' '));
 
     // A registered MENA source is region-relevant by provenance. Other feeds
     // must explicitly mention a MENA country/location before entering this layer.
@@ -59,7 +59,7 @@ export function ingestMenaNewsItems(items: readonly NewsItem[]): MenaEvent[] {
     const event = normalizeMenaEvent({
       id: createMenaEventId(timestamp, sourceId, item.title),
       title: item.title,
-      summary: item.description,
+      summary: item.snippet,
       timestamp,
       sourceId,
       sourceName: item.source,
