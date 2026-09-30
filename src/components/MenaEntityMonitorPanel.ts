@@ -1,7 +1,7 @@
 import { Panel } from './Panel';
 import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 import { queryMenaEntities } from '@/services/mena-intelligence-query';
-import type { MenaEntity, MenaEntityType } from '@/config/mena/entities';
+import type { MenaEntityType } from '@/config/mena/entities';
 
 const COUNTRIES = [
   ['ALL', 'All countries'],
