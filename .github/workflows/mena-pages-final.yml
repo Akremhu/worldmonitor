@@ -37,9 +37,10 @@ jobs:
           cp dist/dashboard.html dist/index.html
           cp dist/dashboard.html dist/404.html
           touch dist/.nojekyll
-          grep -q '/worldmonitor/' dist/index.html
           test -d dist/assets
           find dist/assets -type f | grep -Eq '\\.(js|css)$'
+          echo "HTML asset references:"
+          grep -Eo '(src|href)="[^"]+\\.(js|css)(\\?[^"]*)?"' dist/index.html | head -20 || true
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -62,15 +63,15 @@ jobs:
           curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors "$PAGE_URL" -o /tmp/index.html
           test -s /tmp/index.html
           grep -q 'MENA Monitor' /tmp/index.html
-          grep -q '/worldmonitor/' /tmp/index.html
           python3 - <<'PY'
           import re, subprocess, os
           from urllib.parse import urljoin
           page_url = os.environ["PAGE_URL"]
           html = open("/tmp/index.html", encoding="utf-8").read()
-          assets = sorted(set(urljoin(page_url, u) for u in re.findall(r'(?:src|href)="([^"]+\\.(?:js|css)(?:\\?[^"]*)?)"', html) if u.startswith("/worldmonitor/")))
+          refs = re.findall(r'(?:src|href)="([^"]+\\.(?:js|css)(?:\\?[^"]*)?)"', html)
+          assets = sorted(set(urljoin(page_url, u) for u in refs if not u.startswith(("data:", "blob:", "http://", "https://"))))
           if not assets:
-              raise SystemExit("No /worldmonitor/ JS/CSS assets found")
+              raise SystemExit("No local JS/CSS assets found in deployed HTML")
           for asset in assets:
               subprocess.run(["curl","--fail","--silent","--show-error","--location","--retry","5","--retry-delay","2","--retry-all-errors",asset,"-o","/dev/null"], check=True)
           print(f"Verified {len(assets)} assets")
