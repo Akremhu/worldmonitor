@@ -1106,7 +1106,7 @@ const ENERGY_FEEDS: Record<string, Feed[]> = {
 // MENA-specific preset: keep the existing global catalog intact, but make the
 // regional variant deliberate about geography and signal type.
 const MENA_FEEDS: Record<string, Feed[]> = {
-  middleeast: FULL_FEEDS.middleeast,
+  middleeast: FULL_FEEDS.middleeast ?? [],
   yemen: [
     { name: 'Yemen News', url: rss('https://news.google.com/rss/search?q=(Yemen+OR+Sanaa+OR+Hodeidah+OR+Aden+OR+Taiz)+when:1d&hl=en-US&gl=US&ceid=US:en') },
     { name: 'Sana\'a Center', url: rss('https://sanaacenter.org/feed/') },
