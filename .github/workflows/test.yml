@@ -289,6 +289,8 @@ jobs:
           node scripts/generate-docs-page-dates.mjs
           node scripts/generate-docs-page-dates.mjs --check
           node --test tests/docs-page-dates.test.mjs
+      - name: Regenerate source attribution inventory from current source tree
+        run: node scripts/source-attribution.mjs --write
       - name: Source attribution inventory is current
         run: node scripts/source-attribution.mjs --check
       - name: Homepage teaser strip matches the committed pulse snapshot
