@@ -78,7 +78,11 @@ export class MenaCountryMonitorPanel extends Panel {
 
     const header = document.createElement('div');
     header.className = 'mena-country-header';
-    header.innerHTML = '<span>Country</span><span>24h</span><span>7d</span><span>Linked</span><span>Last seen</span>';
+    for (const label of ['Country', '24h', '7d', 'Linked', 'Last seen']) {
+      const span = document.createElement('span');
+      span.textContent = label;
+      header.appendChild(span);
+    }
     this.body.appendChild(header);
 
     const list = document.createElement('div');
