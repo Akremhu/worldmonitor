@@ -181,7 +181,7 @@ export function renderEvidenceGroundedCountryBrief(
       if (sourceIndexes === 'malformed') return null;
       const cited = parseEvidenceCitations(rawEvidence, evidenceById);
       const text = rawText.trim();
-      if (sourceIndexes === 'out-of-range' || cited === null || !text || text.length > 500 || /[\r\n\[\]*]/.test(text)
+      if (sourceIndexes === 'out-of-range' || cited === null || !text || text.length > 500 || /[\r\n[*]/.test(text)
         || accepted.length >= rule.maxClaims
         || !rule.accepts({ sources: sourceIndexes.length, evidence: cited })
         || !claimIsGrounded(text, sourceIndexes.map((index) => sources[index - 1]!.title), cited)) {
