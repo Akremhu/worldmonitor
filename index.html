@@ -532,7 +532,7 @@
          legacy worker before booting the current bundle. This is intentionally scoped to github.io. -->
     <script>
     (function(){
-      if(!('serviceWorker' in navigator) || !/\\.github\\.io$/i.test(location.hostname))return;
+      if(!('serviceWorker' in navigator) || !/\.github\.io$/i.test(location.hostname))return;
       var key='wm-pages-sw-reset-v3';
       try{if(sessionStorage.getItem(key))return}catch(e){}
       try{sessionStorage.setItem(key,'1')}catch(e){}
