@@ -2,14 +2,14 @@ export const config = { runtime: 'edge' };
 
 const MAX_LIMIT = 100;
 
-function json(body, status = 200) {
+function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { 'Content-Type': 'application/json' },
   });
 }
 
-function finiteNumber(value) {
+function finiteNumber(value: unknown) {
   return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
 
@@ -21,7 +21,7 @@ function getConvexSiteUrl() {
   ).replace(/\/$/, '');
 }
 
-function projectRecord(record) {
+function projectRecord(record: Record<string, any>) {
   const metadata = record?.metadata && typeof record.metadata === 'object'
     ? record.metadata
     : {};
@@ -53,7 +53,7 @@ function projectRecord(record) {
   };
 }
 
-export default async function handler(request) {
+export default async function handler(request: Request) {
   if (request.method !== 'POST') {
     return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
   }
@@ -64,9 +64,9 @@ export default async function handler(request) {
     return json({ error: 'HISTORY_BACKEND_NOT_CONFIGURED' }, 503);
   }
 
-  let body;
+  let body: Record<string, any>;
   try {
-    body = await request.json();
+    body = (await request.json()) as Record<string, any>;
   } catch {
     return json({ error: 'INVALID_JSON' }, 400);
   }
@@ -106,9 +106,9 @@ export default async function handler(request) {
     }),
   });
 
-  let payload;
+  let payload: Record<string, any>;
   try {
-    payload = await upstream.json();
+    payload = (await upstream.json()) as Record<string, any>;
   } catch {
     return json({ error: 'HISTORY_BACKEND_INVALID_RESPONSE' }, 502);
   }
