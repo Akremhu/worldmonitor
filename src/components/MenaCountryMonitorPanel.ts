@@ -1,6 +1,5 @@
 import { Panel } from './Panel';
 import { setTrustedHtml, trustedHtml } from '@/utils/dom-utils';
-import { setTrustedHtml, trustedHtml } from '@/utils/dom-utils';
 import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 
 const COUNTRIES = [
