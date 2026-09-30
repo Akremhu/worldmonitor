@@ -108,8 +108,7 @@ export class MenaSituationOverviewPanel extends Panel {
       const card = document.createElement('div');
       card.className = 'mena-situation-stat';
       setTrustedHtml(card, trustedHtml(`<span>${esc(label)}</span><strong>${esc(value)}</strong>`, 'Escaped descriptive situation statistics.'));
-      setTrustedHtml(card, trustedHtml(`<span>${label}</span><strong>${value}</strong>`, 'Statistic labels and values are controlled application data.'));
-    stats.appendChild(card);
+      stats.appendChild(card);
     }
 
     const grid = document.createElement('div');
