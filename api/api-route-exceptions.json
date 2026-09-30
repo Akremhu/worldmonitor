@@ -911,6 +911,13 @@
       "reason": "Migrating to analyst/v1.ListAgentSkills in commit 9 of #3207. Blocked on sebuf#150.",
       "owner": "@SebastienMelki",
       "removal_issue": "#3207"
+    },
+    {
+      "path": "api/mena-history.ts",
+      "category": "internal-helper",
+      "reason": "MENA historical-intelligence relay used by the frontend to query the existing Convex internal timeline endpoint. It validates the request and proxies the authenticated internal history query rather than exposing a new product data source.",
+      "owner": "@SebastienMelki",
+      "removal_issue": null
     }
   ]
 }
