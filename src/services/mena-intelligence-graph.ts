@@ -1,6 +1,5 @@
 import type { MenaEntity, MenaEntityRelationship, MenaRelationshipType } from '@/config/mena/entities';
 import type { MenaEvent } from '@/config/mena/events';
-import { createMenaEventId } from '@/config/mena/event-graph';
 
 export interface MenaGraphNode {
   id: string;
