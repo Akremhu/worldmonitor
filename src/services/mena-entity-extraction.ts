@@ -1,4 +1,14 @@
-import type { MenaEntity, MenaEntityType } from '@/config/mena/entities';\n\nfunction createStableMenaEntityId(value: string): string {\n  let hash = 2166136261;\n  for (const char of value.normalize('NFKC')) {\n    hash ^= char.codePointAt(0) ?? 0;\n    hash = Math.imul(hash, 16777619);\n  }\n  return 'me-entity-' + (hash >>> 0).toString(16);\n}\n
+import type { MenaEntity, MenaEntityType } from '@/config/mena/entities';
+
+function createStableMenaEntityId(value: string): string {
+  let hash = 2166136261;
+  for (const char of value.normalize('NFKC')) {
+    hash ^= char.codePointAt(0) ?? 0;
+    hash = Math.imul(hash, 16777619);
+  }
+  return 'me-entity-' + (hash >>> 0).toString(16);
+}
+
 
 export interface MenaEntityCandidate {
   canonicalName: string;
