@@ -113,7 +113,7 @@ export function findPublicDocumentationViolations(docsDir = DOCS_DIR) {
 export function inspectDocumentationPublication(docsDir = DOCS_DIR) {
   const { entries, violations } = readIgnoreEntries(docsDir);
   for (const entry of entries) {
-    if (/[!*?\[\]\\]/.test(entry) || entry.startsWith('/')) {
+    if (/[!*?[\]\\]/.test(entry) || entry.startsWith('/')) {
       violations.push(`docs/.mintignore: coverage check requires literal relative files or directories: ${entry}`);
     }
   }
