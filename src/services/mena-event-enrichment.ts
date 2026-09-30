@@ -14,7 +14,7 @@ export function enrichMenaEventsWithEntities(
     const eventEntityIds: string[] = [];
     for (const candidate of candidates) {
       const current = entities.get(candidate.canonicalName);
-      const entity = upsertMenaEntity(current, candidate, event.id, event.sourceIds[0], event.lastUpdatedAt);
+      const entity = upsertMenaEntity(current, candidate, event.id, event.sourceIds[0] ?? 'unknown', event.lastUpdatedAt);
       entities.set(entity.canonicalName, entity);
       eventEntityIds.push(entity.id);
     }
