@@ -51,7 +51,17 @@ jobs:
           touch ./dist/.nojekyll
           test -s ./dist/index.html
           test -s ./dist/404.html
-          grep -q '/worldmonitor/assets/' ./dist/index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ("index.html", "404.html"):
+              path = Path("dist") / name
+              text = path.read_text(encoding="utf-8")
+              text = text.replace('="/worldmonitor/assets/', '="./assets/')
+              text = text.replace("='/worldmonitor/assets/", "='./assets/")
+              path.write_text(text, encoding="utf-8")
+          PY
+          grep -q '="./assets/' ./dist/index.html
+          grep -q '="./assets/' ./dist/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
