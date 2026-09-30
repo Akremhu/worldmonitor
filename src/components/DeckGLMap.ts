@@ -5051,7 +5051,7 @@ export class DeckGLMap {
     switch (layerId) {
       case 'mena-events-layer':
         return {
-          html: \`<div class="deckgl-tooltip"><strong>\${text(obj.title)}</strong><br/>\${text(obj.eventType)} · \${text(obj.location?.countryName || obj.location?.countryCode || '')}<br/>\${text(obj.confidence)} · \${numericLabel(obj.sources?.length)} sources</div>\`,
+          html: `<div class="deckgl-tooltip"><strong>${text(obj.title)}</strong><br/>${text(obj.eventType)} · ${text(obj.location?.countryName || obj.location?.countryCode || '')}<br/>${text(obj.confidence)} · ${numericLabel(obj.sources?.length)} sources</div>`,
         };
       case 'hotspots-layer':
         return { html: `<div class="deckgl-tooltip"><strong>${text(obj.name)}</strong><br/>${text(obj.subtext)}</div>` };
