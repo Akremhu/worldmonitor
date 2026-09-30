@@ -710,7 +710,7 @@ if ('__TAURI_INTERNALS__' in window || '__TAURI__' in window) {
 // property exists but reading it throws SecurityError (WORLDMONITOR-Y5), which
 // at module scope aborts every top-level statement below. Read it once, safely.
 const swContainer = readServiceWorkerContainer();
-const isGitHubPages = import.meta.env.BASE_URL === '/worldmonitor/';
+const isGitHubPages = import.meta.env.BASE_URL === './' || import.meta.env.BASE_URL === '/worldmonitor/';
 
 // GitHub Pages is a static project deployment. Do not let a previously installed
 // World Monitor service worker keep serving stale hashed bundles after a deploy.
