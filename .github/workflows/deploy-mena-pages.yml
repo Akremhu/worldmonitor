@@ -64,3 +64,15 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify deployed site
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          test -n "$PAGE_URL"
+          echo "Verifying $PAGE_URL"
+          curl --fail --silent --show-error --location             --retry 10 --retry-delay 5 --retry-all-errors             "$PAGE_URL" -o /tmp/worldmonitor-pages.html
+          test -s /tmp/worldmonitor-pages.html
+          grep -qi "World Monitor" /tmp/worldmonitor-pages.html
+          echo "GitHub Pages HTTP verification: SUCCESS"
