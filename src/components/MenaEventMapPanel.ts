@@ -76,7 +76,7 @@ export class MenaEventMapPanel extends Panel {
       points.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${radius}" data-event-id="${esc(event.id)}" class="mena-map-event-point" fill="currentColor" opacity="${opacity.toFixed(2)}"><title>${esc(event.title)}</title></circle>`);
     }
 
-    const labels = COUNTRIES.map(([code, name, lat, lon]) => {
+    const labels = COUNTRIES.map(([code, _name, lat, lon]) => {
       const [x, y] = project(lat, lon, width, height);
       const count = counts.get(code) ?? 0;
       return `<g><circle cx="${x}" cy="${y}" r="2" class="mena-map-country"></circle><text x="${x + 6}" y="${y + 3}" class="mena-map-label">${esc(code)} · ${count}</text></g>`;
