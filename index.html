@@ -527,6 +527,34 @@
         <div id="deep-dive-content" class="panel-content"></div>
       </div>
     </aside>
+    <!-- GitHub Pages is a static project site. Older deployments may have left a service worker
+         registered under /worldmonitor/. The Pages build no longer emits a worker, so remove any
+         legacy worker before booting the current bundle. This is intentionally scoped to github.io. -->
+    <script>
+    (function(){
+      if(!('serviceWorker' in navigator) || !/\\.github\\.io$/i.test(location.hostname))return;
+      var key='wm-pages-sw-reset-v2';
+      try{if(sessionStorage.getItem(key))return}catch(e){}
+      try{sessionStorage.setItem(key,'1')}catch(e){}
+      navigator.serviceWorker.getRegistrations().then(function(regs){
+        return Promise.all(regs.map(function(r){return r.unregister()}));
+      }).then(function(){
+        if(!('caches' in window)||!caches.keys)return;
+        return caches.keys().then(function(keys){
+          return Promise.all(keys.map(function(k){return caches.delete(k)}));
+        });
+      }).then(function(){
+        var u=new URL(location.href);
+        if(!u.searchParams.has('wm_sw_reset')){
+          u.searchParams.set('wm_sw_reset','1');
+          location.replace(u.toString());
+        }else if(u.searchParams.has('wm_sw_reset')){
+          u.searchParams.delete('wm_sw_reset');
+          history.replaceState(null,'',u.pathname+(u.search||'')+(u.hash||''));
+        }
+      }).catch(function(){/* Never block dashboard boot on cache cleanup. */});
+    })()
+    </script>
     <!-- Force-clear stale service worker if module scripts 404 (post-deploy cache mismatch) -->
     <script>
     (function(){
