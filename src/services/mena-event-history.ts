@@ -63,7 +63,7 @@ export function recordMenaEventVersions(events: readonly MenaEvent[], recordedAt
     if (fingerprints.get(event.id) === nextFingerprint) continue;
 
     const history = versions.get(event.id) ?? [];
-    const previous = history.at(-1)?.event;
+    const previous = history[history.length - 1]?.event;
     const version: MenaEventVersion = {
       version: history.length + 1,
       eventId: event.id,
@@ -106,7 +106,7 @@ export function getMenaEventHistory(eventId: string): MenaEventVersion[] {
 }
 
 export function getMenaEventLatestVersion(eventId: string): MenaEventVersion | undefined {
-  return versions.get(eventId)?.at(-1);
+  return versions.get(eventId)?.[versions.get(eventId)!.length - 1];
 }
 
 export function clearMenaEventHistory(): void {
