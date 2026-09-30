@@ -710,7 +710,24 @@ if ('__TAURI_INTERNALS__' in window || '__TAURI__' in window) {
 // property exists but reading it throws SecurityError (WORLDMONITOR-Y5), which
 // at module scope aborts every top-level statement below. Read it once, safely.
 const swContainer = readServiceWorkerContainer();
-if (!('__TAURI_INTERNALS__' in window) && !('__TAURI__' in window) && swContainer) {
+const isGitHubPages = import.meta.env.BASE_URL === '/worldmonitor/';
+
+// GitHub Pages is a static project deployment. Do not let a previously installed
+// World Monitor service worker keep serving stale hashed bundles after a deploy.
+// The production Vercel deployment keeps the full PWA behavior.
+if (isGitHubPages && swContainer) {
+  void swContainer.getRegistrations().then(async (registrations) => {
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+    }
+  }).catch(() => {
+    // Best-effort cleanup; failure must never block dashboard startup.
+  });
+}
+
+if (!isGitHubPages && !('__TAURI_INTERNALS__' in window) && !('__TAURI__' in window) && swContainer) {
   installSwUpdateHandler({ version: __APP_VERSION__, swContainer });
 
   const SW_UPDATE_SUCCESS_INTERVAL_MS = 60 * 60 * 1000;
