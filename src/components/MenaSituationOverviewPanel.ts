@@ -1,5 +1,4 @@
 import { Panel } from './Panel';
-import { setTrustedHtml, trustedHtml } from '@/utils/dom-utils';
 import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 import { MENA_SOURCE_HEALTH_POLICIES, getMenaFreshnessState } from '@/config/mena/source-health';
 import { setTrustedHtml, trustedHtml } from '@/utils/dom-utils';
