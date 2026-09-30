@@ -163,6 +163,7 @@ const PANEL_CLUSTER: Record<string, PanelChunkName> = {
   Monitor: 'panels-intel', PinnedWebcams: 'panels-intel',
   Prediction: 'panels-intel', ProgressCharts: 'panels-intel',
   RegionalIntelligenceBoard: 'panels-intel',
+  MenaSituationOverview: 'panels-intel',
   Regulation: 'panels-intel',
   // Disasters / climate / connectivity / society
   ClimateAnomaly: 'panels-risk', Counters: 'panels-risk',
