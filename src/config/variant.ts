@@ -55,5 +55,10 @@ export const SITE_VARIANT: string = (() => {
     return buildVariant;
   }
 
+  // Project-hosted builds (for example GitHub Pages at *.github.io) do not
+  // encode the variant in the hostname. Preserve the compile-time variant so
+  // `VITE_VARIANT=mena` remains MENA instead of silently falling back to full.
+  if (isSiteVariant(buildVariant) && buildVariant !== 'full') return buildVariant;
+
   return 'full';
 })();
