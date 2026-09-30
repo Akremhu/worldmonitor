@@ -88,31 +88,29 @@ jobs:
           test -s /tmp/index.html
           grep -q 'MENA Monitor' /tmp/index.html
           python3 - <<'PY'
-          import re, subprocess, os
+          import re
+          import subprocess
+          import os
           from urllib.parse import urljoin
+
           page_url = os.environ['PAGE_URL']
           html = open('/tmp/index.html', encoding='utf-8').read()
           refs = re.findall(r'(?:src|href)="([^"]+)"', html)
           assets = sorted({
               urljoin(page_url, ref)
               for ref in refs
-              if ref.startswith('/worldmonitor/assets/') and re.search(r'\.(?:js|css)(?:\?.*)?
+              if ref.startswith('/worldmonitor/assets/')
+              and re.search(r'\.(?:js|css)(?:\?.*)?$', ref)
           })
           if not assets:
-              raise SystemExit('No local JS/CSS assets found')
+              raise SystemExit('No project-base JS/CSS assets found')
           for asset in assets:
               print('Checking asset:', asset)
-              subprocess.run(['curl','--fail','--silent','--show-error','--location','--retry','8','--retry-delay','2','--retry-all-errors',asset,'-o','/dev/null'], check=True)
-          print(f'Verified {len(assets)} deployed JS/CSS assets')
-          PY
-          echo 'FINAL MENA PAGES DEPLOYMENT: SUCCESS'
-, ref)
-          })
-          if not assets:
-              raise SystemExit('No local JS/CSS assets found')
-          for asset in assets:
-              print('Checking asset:', asset)
-              subprocess.run(['curl','--fail','--silent','--show-error','--location','--retry','8','--retry-delay','2','--retry-all-errors',asset,'-o','/dev/null'], check=True)
+              subprocess.run([
+                  'curl', '--fail', '--silent', '--show-error', '--location',
+                  '--retry', '8', '--retry-delay', '2', '--retry-all-errors',
+                  asset, '-o', '/dev/null'
+              ], check=True)
           print(f'Verified {len(assets)} deployed JS/CSS assets')
           PY
           echo 'FINAL MENA PAGES DEPLOYMENT: SUCCESS'
