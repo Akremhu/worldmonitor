@@ -1198,37 +1198,9 @@ const MENA_PANELS: Record<string, PanelConfig> = {
   monitors: { name: 'My Monitors', enabled: true, priority: 3 },
 };
 
-const MENA_MAP_LAYERS: MapLayers = {
-  gpsJamming: true, satellites: false, conflicts: true, bases: true, cables: true,
-  pipelines: true, hotspots: true, ais: true, nuclear: true, irradiators: false,
-  sanctions: true, weather: true, canadaRoads: false, canadaAlerts: false, economic: true,
-  waterways: true, outages: true, cyberThreats: true, datacenters: false, protests: true,
-  flights: true, military: true, natural: true, spaceports: false, minerals: true,
-  fires: true, ucdpEvents: true, displacement: true, climate: true,
-  startupHubs: false, cloudRegions: false, accelerators: false, techHQs: false, techEvents: false,
-  stockExchanges: true, financialCenters: true, centralBanks: true, commodityHubs: true,
-  gulfInvestments: true, positiveEvents: false, kindness: false, happiness: false,
-  speciesRecovery: false, renewableInstallations: true, tradeRoutes: true, iranAttacks: false,
-  ciiChoropleth: true, resilienceScore: true, dayNight: false, miningSites: false,
-  processingPlants: false, commodityPorts: true, webcams: false, diseaseOutbreaks: true,
-  storageFacilities: true, fuelShortages: true, liveTankers: true,
-};
 
-const MENA_MOBILE_MAP_LAYERS: MapLayers = {
-  gpsJamming: false, satellites: false, conflicts: true, bases: false, cables: false,
-  pipelines: true, hotspots: true, ais: false, nuclear: false, irradiators: false,
-  sanctions: true, weather: true, canadaRoads: false, canadaAlerts: false, economic: false,
-  waterways: true, outages: true, cyberThreats: false, datacenters: false, protests: false,
-  flights: false, military: false, natural: true, spaceports: false, minerals: false,
-  fires: false, ucdpEvents: true, displacement: true, climate: false,
-  startupHubs: false, cloudRegions: false, accelerators: false, techHQs: false, techEvents: false,
-  stockExchanges: false, financialCenters: false, centralBanks: false, commodityHubs: false,
-  gulfInvestments: false, positiveEvents: false, kindness: false, happiness: false,
-  speciesRecovery: false, renewableInstallations: false, tradeRoutes: false, iranAttacks: false,
-  ciiChoropleth: false, resilienceScore: false, dayNight: false, miningSites: false,
-  processingPlants: false, commodityPorts: true, webcams: false, diseaseOutbreaks: false,
-  storageFacilities: false, fuelShortages: false, liveTankers: false,
-};
+
+
 
 const VARIANT_PANEL_CONFIGS: Record<PanelVariant, Record<string, PanelConfig>> = {
   full: FULL_PANELS,
