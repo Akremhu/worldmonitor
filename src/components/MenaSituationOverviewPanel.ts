@@ -1,4 +1,5 @@
 import { Panel } from './Panel';
+import { setTrustedHtml, trustedHtml } from '@/utils/dom-utils';
 import { getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 import { MENA_SOURCE_HEALTH_POLICIES, getMenaFreshnessState } from '@/config/mena/source-health';
 import { setTrustedHtml, trustedHtml } from '@/utils/dom-utils';
@@ -15,6 +16,10 @@ const EVENT_TYPES = [
   'military_movement', 'airspace', 'maritime', 'cyber', 'infrastructure',
   'energy', 'economic', 'humanitarian', 'natural_disaster', 'other',
 ] as const;
+
+function esc(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] ?? char));
+}
 
 function age(timestamp: number): string {
   if (!timestamp) return '—';
@@ -103,7 +108,7 @@ export class MenaSituationOverviewPanel extends Panel {
     ]) {
       const card = document.createElement('div');
       card.className = 'mena-situation-stat';
-      card.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
+      setTrustedHtml(card, trustedHtml(`<span>${esc(label)}</span><strong>${esc(value)}</strong>`, 'Escaped descriptive situation statistics.'));
       setTrustedHtml(card, trustedHtml(`<span>${label}</span><strong>${value}</strong>`, 'Statistic labels and values are controlled application data.'));
     stats.appendChild(card);
     }
