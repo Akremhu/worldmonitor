@@ -2439,43 +2439,6 @@ http.route({
 });
 
 http.route({
-  path: "/api/internal-intel-timeline",
-  method: "POST",
-  handler: httpAction(async (ctx, request) => {
-    const providedSecret = request.headers.get("x-convex-shared-secret") ?? "";
-    const expectedSecret = process.env.CONVEX_SERVER_SHARED_SECRET ?? "";
-    if (!expectedSecret || !(await timingSafeEqualStrings(providedSecret, expectedSecret))) {
-      return intelJson({ error: "UNAUTHORIZED" }, 401);
-    }
-
-    const body = await parseJsonObjectBody<Record<string, unknown>>(request);
-    if (!body) {
-      return intelJson({ error: "INVALID_JSON" }, 400);
-    }
-
-    const parsed = readIntelQueryScope(body);
-    if (!parsed.ok) {
-      return intelJson({ error: parsed.error }, 400);
-    }
-    // An unscoped read has no index to serve it; the query throws on this too.
-    if (parsed.scope.domain === undefined && parsed.scope.country === undefined) {
-      return intelJson(
-        { error: "MISSING_SCOPE", required: ["domain", "country"], mode: "any_of" },
-        400,
-      );
-    }
-
-    try {
-      const result = await ctx.runQuery(internal.intelHistory.timeline, parsed.scope);
-      return intelJson(result, 200);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "intel history timeline failed";
-      return intelJson({ error: msg }, 500);
-    }
-  }),
-});
-
-http.route({
   path: "/api/internal-intel-search",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
