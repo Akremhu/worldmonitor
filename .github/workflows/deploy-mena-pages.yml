@@ -43,6 +43,9 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Prepare GitHub Pages entrypoint
+        run: cp ./dist/dashboard.html ./dist/index.html
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
