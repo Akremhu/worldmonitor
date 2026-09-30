@@ -51,6 +51,79 @@ jobs:
           touch ./dist/.nojekyll
           test -s ./dist/index.html
           test -s ./dist/404.html
+          test -d ./dist/assets
+          find ./dist/assets -type f | grep -Eq '\\.(js|css)(\\.br)?
+          from pathlib import Path
+          for name in ("index.html", "404.html"):
+              path = Path("dist") / name
+              text = path.read_text(encoding="utf-8")
+              text = text.replace('="/worldmonitor/assets/', '="./assets/')
+              text = text.replace("='/worldmonitor/assets/", "='./assets/")
+              path.write_text(text, encoding="utf-8")
+          PY
+          grep -q '="./assets/' ./dist/index.html
+          grep -q '="./assets/' ./dist/404.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    name: Deploy MENA
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify deployed site
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          test -n "$PAGE_URL"
+          echo "Verifying $PAGE_URL"
+          curl --fail --silent --show-error --location             --retry 10 --retry-delay 5 --retry-all-errors             "$PAGE_URL" -o /tmp/worldmonitor-pages.html
+          test -s /tmp/worldmonitor-pages.html
+          grep -Eqi "World Monitor|MENA Monitor" /tmp/worldmonitor-pages.html
+
+          # Verify every local JS/CSS asset referenced by the deployed HTML.
+          python3 - <<'PY'
+          import html
+          import re
+          import subprocess
+          import os
+          from urllib.parse import urljoin
+
+          page_url = os.environ["PAGE_URL"]
+          page = open("/tmp/worldmonitor-pages.html", encoding="utf-8").read()
+          refs = re.findall(r'(?:src|href)="([^"]+)"', page)
+          urls = sorted({
+              urljoin(page_url, html.unescape(ref))
+              for ref in refs
+              if html.unescape(ref).startswith("./assets/")
+              and re.search(r'\.(?:js|css)(?:\?.*)?$', html.unescape(ref))
+          })
+          if not urls:
+              raise SystemExit("No local ./assets JS/CSS references found")
+          for url in urls:
+              print(f"Checking asset: {url}")
+              subprocess.run([
+                  "curl", "--fail", "--silent", "--show-error", "--location",
+                  "--retry", "8", "--retry-delay", "2", "--retry-all-errors",
+                  url, "-o", "/dev/null"
+              ], check=True)
+          print(f"Verified {len(urls)} deployed JS/CSS assets")
+          PY
+
+          echo "GitHub Pages HTTP + asset verification: SUCCESS"
+
+          grep -q 'MENA Monitor' ./dist/index.html
           python3 - <<'PY'
           from pathlib import Path
           for name in ("index.html", "404.html"):
