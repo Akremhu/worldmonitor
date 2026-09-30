@@ -898,7 +898,10 @@ export default defineConfig(({ mode }) => {
   const activeVariant = process.env.VITE_VARIANT || 'full';
   const activeMeta = VARIANT_META[activeVariant] || VARIANT_META.full;
   const isGitHubPagesBuild = process.env.GITHUB_PAGES === '1';
-  const publicBase = isGitHubPagesBuild ? '/worldmonitor/' : '/';
+  // GitHub Pages is a project site, so relative asset URLs are more robust than
+  // hard-coding the repository name into every emitted HTML asset reference.
+  // The page itself still lives at /worldmonitor/; ./assets/... resolves there.
+  const publicBase = isGitHubPagesBuild ? './' : '/';
   const emitPublicSourceMaps = process.env.WM_EMIT_SOURCEMAPS === '1'
     || process.env.VERCEL_ENV === 'preview';
   // Sentry source-map upload. Gated on the token so a build without it (local,
@@ -911,7 +914,7 @@ export default defineConfig(({ mode }) => {
   return {
     // GitHub Pages serves project sites under /worldmonitor/. Keep normal
     // deployments at the root and opt into the project base only in CI.
-    base: isGitHubPagesBuild ? '/worldmonitor/' : '/',
+    base: publicBase,
     html: {
       cspNonce: STATIC_SCRIPT_NONCE,
     },
