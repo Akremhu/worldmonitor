@@ -35,7 +35,7 @@ export function buildMenaStoryCluster(events: readonly MenaEvent[], id: string):
   const sorted = [...events].sort((a, b) => a.timestamp - b.timestamp);
   return {
     id,
-    title: sorted[0].title,
+    title: sorted[0]!.title,
     eventIds: [...new Set(sorted.map((e) => e.id))],
     sourceIds: [...new Set(sorted.flatMap((e) => e.sourceIds))],
     languages: [...new Set(sorted.map((e) => e.language).filter(Boolean) as string[])],
