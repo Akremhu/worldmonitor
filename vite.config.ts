@@ -323,6 +323,12 @@ function dashboardHtmlOutputPlugin(): Plugin {
       dashboardHtml.fileName = 'dashboard.html';
       if (typeof dashboardHtml.source === 'string') {
         dashboardHtml.source = deferDashboardStylesheetLinks(dashboardHtml.source, bundle);
+        if (process.env.GITHUB_PAGES === '1') {
+          dashboardHtml.source = dashboardHtml.source.replace(
+            /(["'(])(?:\.\/)?assets\//g,
+            '$1/worldmonitor/assets/',
+          );
+        }
       }
       bundle['dashboard.html'] = dashboardHtml;
     },
