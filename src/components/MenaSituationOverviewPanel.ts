@@ -115,7 +115,7 @@ export class MenaSituationOverviewPanel extends Panel {
     for (const row of countries.slice(0, 8)) {
       const item = document.createElement('div');
       item.className = 'mena-situation-bar-row';
-      item.innerHTML = `<span>${row.name}</span><i><b style="width:${last24h.length ? Math.min(100, row.count / Math.max(1, countries[0].count) * 100) : 0}%"></b></i><em>${row.count}</em>`;
+      item.innerHTML = `<span>${row.name}</span><i><b style="width:${last24h.length ? Math.min(100, row.count / Math.max(1, countries[0]?.count ?? 0) * 100) : 0}%"></b></i><em>${row.count}</em>`;
       countrySection.appendChild(item);
     }
 
