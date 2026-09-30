@@ -25,7 +25,7 @@ export function correlateMenaEvents(events: readonly MenaEvent[], options: { max
       let score = 0; const reasons: string[] = [];
       if (a.eventType === b.eventType) { score += 0.2; reasons.push('same event type'); }
       if (a.location?.countryCode && a.location.countryCode === b.location?.countryCode) { score += 0.2; reasons.push('same country'); }
-      if (a.location?.city && a.location.city === b.location.city) { score += 0.15; reasons.push('same city'); }
+      if (a.location?.city && a.location.city === b.location?.city) { score += 0.15; reasons.push('same city'); }
       const tokenOverlap = overlap(normalize(a.title + ' ' + (a.summary ?? '')), normalize(b.title + ' ' + (b.summary ?? '')));
       if (tokenOverlap >= 0.75) { score += 0.45; reasons.push('high lexical overlap'); } else if (tokenOverlap >= 0.55) { score += 0.3; reasons.push('moderate lexical overlap'); }
       if (deltaHours <= 2) { score += 0.15; reasons.push('close in time'); }
