@@ -52,12 +52,9 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           for name in ('index.html', '404.html'):
-              p = Path('dist') / name
-              s = p.read_text(encoding='utf-8')
-              if '/worldmonitor/assets/' in s:
-                  s = s.replace('/worldmonitor/assets/', './assets/')
-              p.write_text(s, encoding='utf-8')
-              assert './assets/' in s, f'{name}: missing local assets'
+              s = (Path('dist') / name).read_text(encoding='utf-8')
+              assert '/worldmonitor/assets/' in s, f'{name}: missing project-base assets'
+              assert '/src/main.ts' not in s, f'{name}: untransformed Vite source entry'
           PY
 
       - name: Configure Pages
@@ -99,7 +96,17 @@ jobs:
           assets = sorted({
               urljoin(page_url, ref)
               for ref in refs
-              if ref.startswith('./assets/') and re.search(r'\.(?:js|css)(?:\?.*)?$', ref)
+              if ref.startswith('/worldmonitor/assets/') and re.search(r'\.(?:js|css)(?:\?.*)?
+          })
+          if not assets:
+              raise SystemExit('No local JS/CSS assets found')
+          for asset in assets:
+              print('Checking asset:', asset)
+              subprocess.run(['curl','--fail','--silent','--show-error','--location','--retry','8','--retry-delay','2','--retry-all-errors',asset,'-o','/dev/null'], check=True)
+          print(f'Verified {len(assets)} deployed JS/CSS assets')
+          PY
+          echo 'FINAL MENA PAGES DEPLOYMENT: SUCCESS'
+, ref)
           })
           if not assets:
               raise SystemExit('No local JS/CSS assets found')
