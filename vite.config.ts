@@ -898,6 +898,7 @@ export default defineConfig(({ mode }) => {
   const activeVariant = process.env.VITE_VARIANT || 'full';
   const activeMeta = VARIANT_META[activeVariant] || VARIANT_META.full;
   const isGitHubPagesBuild = process.env.GITHUB_PAGES === '1';
+  const publicBase = isGitHubPagesBuild ? '/worldmonitor/' : '/';
   const emitPublicSourceMaps = process.env.WM_EMIT_SOURCEMAPS === '1'
     || process.env.VERCEL_ENV === 'preview';
   // Sentry source-map upload. Gated on the token so a build without it (local,
@@ -1003,17 +1004,17 @@ export default defineConfig(({ mode }) => {
           name: `${activeMeta.siteName} - ${activeMeta.subject}`,
           short_name: activeMeta.shortName,
           description: activeMeta.description,
-          start_url: '/dashboard',
-          scope: '/',
+          start_url: publicBase,
+          scope: publicBase,
           display: 'standalone',
           orientation: 'any',
           theme_color: '#0a0f0a',
           background_color: '#0a0f0a',
           categories: activeMeta.categories,
           icons: [
-            { src: '/favico/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
-            { src: '/favico/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
-            { src: '/favico/android-chrome-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+            { src: `${publicBase}favico/android-chrome-192x192.png`, sizes: '192x192', type: 'image/png' },
+            { src: `${publicBase}favico/android-chrome-512x512.png`, sizes: '512x512', type: 'image/png' },
+            { src: `${publicBase}favico/android-chrome-512x512.png`, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
           ],
         },
 
@@ -1051,7 +1052,11 @@ export default defineConfig(({ mode }) => {
           // public/ and attaches 'push' + 'notificationclick' listeners.
           // /link-suppression-check.js must load BEFORE the push handler
           // so notificationclick can consult the operator block set (#8401).
-          importScripts: ['/link-suppression-check.js', '/push-handler.js', '/sw-navigation.js'],
+          importScripts: [
+            `${publicBase}link-suppression-check.js`,
+            `${publicBase}push-handler.js`,
+            `${publicBase}sw-navigation.js`,
+          ],
 
           // Navigations are handled by public/sw-navigation.js (network-first
           // with an offline.html fallback), NOT by a runtime cache: a cached
