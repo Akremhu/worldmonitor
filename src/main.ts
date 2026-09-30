@@ -716,15 +716,21 @@ const isGitHubPages = import.meta.env.BASE_URL === './' || import.meta.env.BASE_
 // World Monitor service worker keep serving stale hashed bundles after a deploy.
 // The production Vercel deployment keeps the full PWA behavior.
 if (isGitHubPages && swContainer) {
-  void swContainer.getRegistrations().then(async (registrations) => {
-    await Promise.all(registrations.map((registration) => registration.unregister()));
-    if ('caches' in window) {
-      const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-    }
-  }).catch(() => {
-    // Best-effort cleanup; failure must never block dashboard startup.
-  });
+  const swWithRegistrations = swContainer as typeof swContainer & {
+    getRegistrations?: () => Promise<Array<{ unregister: () => Promise<boolean> }>>;
+  };
+  const getRegistrations = swWithRegistrations.getRegistrations;
+  if (getRegistrations) {
+    void getRegistrations.call(swContainer).then(async (registrations) => {
+      await Promise.all(registrations.map((registration) => registration.unregister()));
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+      }
+    }).catch(() => {
+      // Best-effort cleanup; failure must never block dashboard startup.
+    });
+  }
 }
 
 if (!isGitHubPages && !('__TAURI_INTERNALS__' in window) && !('__TAURI__' in window) && swContainer) {
