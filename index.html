@@ -533,7 +533,7 @@
     <script>
     (function(){
       if(!('serviceWorker' in navigator) || !/\\.github\\.io$/i.test(location.hostname))return;
-      var key='wm-pages-sw-reset-v2';
+      var key='wm-pages-sw-reset-v3';
       try{if(sessionStorage.getItem(key))return}catch(e){}
       try{sessionStorage.setItem(key,'1')}catch(e){}
       navigator.serviceWorker.getRegistrations().then(function(regs){
