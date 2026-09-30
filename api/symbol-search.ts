@@ -172,7 +172,7 @@ export default async function handler(
   }
 
   const rawQuery = new URL(req.url).searchParams.get('q') ?? '';
-  if (rawQuery.length > 64 || !/^[\p{L}\p{M}\p{N} .&’'\-]*$/u.test(rawQuery)) {
+  if (rawQuery.length > 64 || !/^[\p{L}\p{M}\p{N} .&’'-]*$/u.test(rawQuery)) {
     return jsonResponse({ error: 'INVALID_QUERY' }, 400, cors);
   }
   const q = rawQuery.trim();
