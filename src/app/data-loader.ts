@@ -134,7 +134,7 @@ import { fetchOrefAlerts, startOrefPolling, stopOrefPolling, onOrefAlertsUpdate,
 import { getResilienceRanking } from '@/services/resilience';
 import { ingestMenaNewsItems, setMenaEvents } from '@/services/mena-event-pipeline';
 import { enrichMenaEventsWithEntities } from '@/services/mena-event-enrichment';
-import { updateMenaIntelligenceStore } from '@/services/mena-intelligence-store';
+import { getMenaIntelligenceStore, updateMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 
 import { buildResilienceChoroplethMap } from '@/components/resilience-choropleth-utils';
 import { enrichEventsWithExposure } from '@/services/population-exposure';
