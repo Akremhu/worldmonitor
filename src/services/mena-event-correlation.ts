@@ -19,9 +19,9 @@ export function correlateMenaEvents(events: readonly MenaEvent[], options: { max
   const maxHours = options.maxHours ?? 24; const minScore = options.minScore ?? 0.55; const limit = Math.min(options.limit ?? 200, 500);
   const sorted = [...events].sort((a, b) => a.timestamp - b.timestamp); const output: MenaCorrelation[] = [];
   for (let i = 0; i < sorted.length; i++) {
-    const a = sorted[i];
+    const a = sorted[i]!;
     for (let j = i + 1; j < sorted.length; j++) {
-      const b = sorted[j]; const deltaHours = (b.timestamp - a.timestamp) / 3600000; if (deltaHours > maxHours) break;
+      const b = sorted[j]!; const deltaHours = (b.timestamp - a.timestamp) / 3600000; if (deltaHours > maxHours) break;
       let score = 0; const reasons: string[] = [];
       if (a.eventType === b.eventType) { score += 0.2; reasons.push('same event type'); }
       if (a.location?.countryCode && a.location.countryCode === b.location?.countryCode) { score += 0.2; reasons.push('same country'); }
