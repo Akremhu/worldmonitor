@@ -1,5 +1,5 @@
 import { Panel } from './Panel';
-import { getMenaEntity, getMenaEvent, getMenaIntelligenceStore, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
+import { getMenaEntity, getMenaEvent, subscribeMenaIntelligenceStore } from '@/services/mena-intelligence-store';
 import { getMenaSourcePolicy } from '@/config/mena/source-registry';
 import type { MenaEvent, MenaEventSource } from '@/config/mena/events';
 import { getSelectedMenaEventId, subscribeMenaEventSelection } from '@/services/mena-event-selection';
