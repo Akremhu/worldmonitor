@@ -45,8 +45,13 @@ jobs:
 
       - name: Prepare GitHub Pages entrypoint
         run: |
+          test -s ./dist/dashboard.html
           cp ./dist/dashboard.html ./dist/index.html
+          cp ./dist/dashboard.html ./dist/404.html
           touch ./dist/.nojekyll
+          test -s ./dist/index.html
+          test -s ./dist/404.html
+          grep -q '/worldmonitor/assets/' ./dist/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -74,7 +79,7 @@ jobs:
           echo "Verifying $PAGE_URL"
           curl --fail --silent --show-error --location             --retry 10 --retry-delay 5 --retry-all-errors             "$PAGE_URL" -o /tmp/worldmonitor-pages.html
           test -s /tmp/worldmonitor-pages.html
-          grep -qi "World Monitor" /tmp/worldmonitor-pages.html
+          grep -Eqi "World Monitor|MENA Monitor" /tmp/worldmonitor-pages.html
 
           # Verify the project-base asset URLs resolve, not just the HTML shell.
           python3 - <<'PY'
