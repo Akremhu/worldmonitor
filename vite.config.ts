@@ -901,7 +901,7 @@ export default defineConfig(({ mode }) => {
   // GitHub Pages is a project site, so relative asset URLs are more robust than
   // hard-coding the repository name into every emitted HTML asset reference.
   // The page itself still lives at /worldmonitor/; ./assets/... resolves there.
-  const publicBase = isGitHubPagesBuild ? './' : '/';
+  const publicBase = isGitHubPagesBuild ? '/worldmonitor/' : '/';
   const emitPublicSourceMaps = process.env.WM_EMIT_SOURCEMAPS === '1'
     || process.env.VERCEL_ENV === 'preview';
   // Sentry source-map upload. Gated on the token so a build without it (local,
