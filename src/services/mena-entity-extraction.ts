@@ -82,7 +82,7 @@ export function extractMenaEntityCandidates(text: string): MenaEntityCandidate[]
   for (const pattern of ENTITY_PATTERNS) {
     const matches = pattern.terms.filter(term => value.includes(normalize(term)));
     if (!matches.length) continue;
-    const canonicalName = matches[0];
+    const canonicalName = matches[0]!;
     const existing = candidates.get(canonicalName);
     candidates.set(canonicalName, {
       canonicalName,
