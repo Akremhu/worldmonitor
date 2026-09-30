@@ -75,4 +75,30 @@ jobs:
           curl --fail --silent --show-error --location             --retry 10 --retry-delay 5 --retry-all-errors             "$PAGE_URL" -o /tmp/worldmonitor-pages.html
           test -s /tmp/worldmonitor-pages.html
           grep -qi "World Monitor" /tmp/worldmonitor-pages.html
-          echo "GitHub Pages HTTP verification: SUCCESS"
+
+          # Verify the project-base asset URLs resolve, not just the HTML shell.
+          python3 - <<'PY'
+          import html
+          import re
+          from urllib.parse import urljoin
+          page_url = "${{ steps.deployment.outputs.page_url }}"
+          page = open("/tmp/worldmonitor-pages.html", encoding="utf-8").read()
+          urls = []
+          for match in re.finditer(r'(?:src|href)="([^"]+)"', page):
+              asset = html.unescape(match.group(1))
+              if asset.startswith("/worldmonitor/") and (".js" in asset or ".css" in asset):
+                  urls.append(urljoin(page_url, asset))
+          if not urls:
+              raise SystemExit("No project-base JS/CSS assets found in deployed HTML")
+          for url in sorted(set(urls)):
+              print(f"Checking asset: {url}")
+              import subprocess
+              subprocess.run([
+                  "curl", "--fail", "--silent", "--show-error", "--location",
+                  "--retry", "5", "--retry-delay", "2", "--retry-all-errors",
+                  url, "-o", "/dev/null"
+              ], check=True)
+          print(f"Verified {len(set(urls))} project-base assets")
+          PY
+
+          echo "GitHub Pages HTTP + asset verification: SUCCESS"
