@@ -38,6 +38,7 @@ jobs:
         run: npm run build:mena
 
       - name: Prepare Pages site
+        shell: bash
         run: |
           set -euo pipefail
           test -s dist/dashboard.html
@@ -47,13 +48,19 @@ jobs:
           test -s dist/index.html
           test -s dist/404.html
           test -d dist/assets
-          test -n "$(find dist/assets -type f -regextype posix-extended -regex '.*\\.(js|css)(\\.br)?          grep -q 'MENA Monitor' dist/index.html
           python3 - <<'PY'
           from pathlib import Path
-          for name in ('index.html', '404.html'):
-              s = (Path('dist') / name).read_text(encoding='utf-8')
-              assert '/worldmonitor/assets/' in s, f'{name}: missing project-base assets'
-              assert '/src/main.ts' not in s, f'{name}: untransformed Vite source entry'
+          import re
+          for name in ("index.html", "404.html"):
+              s = (Path("dist") / name).read_text(encoding="utf-8")
+              assert "MENA Monitor" in s, f"{name}: missing MENA Monitor marker"
+              assert "/src/main.ts" not in s, f"{name}: untransformed Vite source entry"
+              refs = re.findall(r'(?:src|href)="([^"]+)"', s)
+              assets = [ref for ref in refs if "/assets/" in ref and re.search(r"\.(?:js|css)(?:\?.*)?$", ref)]
+              assert assets, f"{name}: no JS/CSS asset references"
+              assert all(ref.startswith("/worldmonitor/assets/") for ref in assets), f"{name}: incorrect GitHub Pages asset base"
+          asset_files = list(Path("dist/assets").rglob("*"))
+          assert any(p.is_file() and re.search(r"\.(?:js|css)(?:\.br)?$", p.name) for p in asset_files), "dist/assets: no JS/CSS output"
           PY
 
       - name: Configure Pages
@@ -79,6 +86,7 @@ jobs:
       - name: Verify deployed site
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        shell: bash
         run: |
           set -euo pipefail
           test -n "$PAGE_URL"
@@ -92,91 +100,24 @@ jobs:
           import os
           from urllib.parse import urljoin
 
-          page_url = os.environ['PAGE_URL']
-          html = open('/tmp/index.html', encoding='utf-8').read()
+          page_url = os.environ["PAGE_URL"]
+          html = open("/tmp/index.html", encoding="utf-8").read()
           refs = re.findall(r'(?:src|href)="([^"]+)"', html)
           assets = sorted({
               urljoin(page_url, ref)
               for ref in refs
-              if ref.startswith('/worldmonitor/assets/')
-              and re.search(r'\.(?:js|css)(?:\?.*)?$', ref)
+              if ref.startswith("/worldmonitor/assets/")
+              and re.search(r"\.(?:js|css)(?:\?.*)?$", ref)
           })
           if not assets:
-              raise SystemExit('No project-base JS/CSS assets found')
+              raise SystemExit("No project-base JS/CSS assets found")
           for asset in assets:
-              print('Checking asset:', asset)
+              print("Checking asset:", asset)
               subprocess.run([
-                  'curl', '--fail', '--silent', '--show-error', '--location',
-                  '--retry', '8', '--retry-delay', '2', '--retry-all-errors',
-                  asset, '-o', '/dev/null'
+                  "curl", "--fail", "--silent", "--show-error", "--location",
+                  "--retry", "8", "--retry-delay", "2", "--retry-all-errors",
+                  asset, "-o", "/dev/null"
               ], check=True)
-          print(f'Verified {len(assets)} deployed JS/CSS assets')
-          PY
-          echo 'FINAL MENA PAGES DEPLOYMENT: SUCCESS'
- -print -quit)"
-          grep -q 'MENA Monitor' dist/index.html
-          python3 - <<'PY'
-          from pathlib import Path
-          for name in ('index.html', '404.html'):
-              s = (Path('dist') / name).read_text(encoding='utf-8')
-              assert '/worldmonitor/assets/' in s, f'{name}: missing project-base assets'
-              assert '/src/main.ts' not in s, f'{name}: untransformed Vite source entry'
-          PY
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    name: Deploy MENA
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-      - name: Verify deployed site
-        env:
-          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: |
-          set -euo pipefail
-          test -n "$PAGE_URL"
-          echo "Verifying $PAGE_URL"
-          curl --fail --silent --show-error --location --retry 15 --retry-delay 4 --retry-all-errors "$PAGE_URL" -o /tmp/index.html
-          test -s /tmp/index.html
-          grep -q 'MENA Monitor' /tmp/index.html
-          python3 - <<'PY'
-          import re
-          import subprocess
-          import os
-          from urllib.parse import urljoin
-
-          page_url = os.environ['PAGE_URL']
-          html = open('/tmp/index.html', encoding='utf-8').read()
-          refs = re.findall(r'(?:src|href)="([^"]+)"', html)
-          assets = sorted({
-              urljoin(page_url, ref)
-              for ref in refs
-              if ref.startswith('/worldmonitor/assets/')
-              and re.search(r'\.(?:js|css)(?:\?.*)?$', ref)
-          })
-          if not assets:
-              raise SystemExit('No project-base JS/CSS assets found')
-          for asset in assets:
-              print('Checking asset:', asset)
-              subprocess.run([
-                  'curl', '--fail', '--silent', '--show-error', '--location',
-                  '--retry', '8', '--retry-delay', '2', '--retry-all-errors',
-                  asset, '-o', '/dev/null'
-              ], check=True)
-          print(f'Verified {len(assets)} deployed JS/CSS assets')
+          print(f"Verified {len(assets)} deployed JS/CSS assets")
           PY
           echo 'FINAL MENA PAGES DEPLOYMENT: SUCCESS'
